@@ -1,0 +1,21 @@
+hosts = {{ DATABASE_HOSTNAME }}:{{ DATABASE_PORT }}
+user = {{ DATABASE_USERNAME }}
+password = {{ DATABASE_PASSWORD }}
+dbname = {{ DATABASE_NAME }}
+
+query =
+    select
+        1
+    from
+        virtual_users as u1,
+        (select
+                inner_user.id,
+                concat(username,'@',d.name) as email
+            from
+                virtual_users as inner_user
+            inner join
+                virtual_domains as d on d.id = inner_user.domain_id
+        ) as u2
+    where
+        u1.id = u2.id
+        and u2.email = "%s"

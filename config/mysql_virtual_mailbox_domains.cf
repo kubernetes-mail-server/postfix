@@ -1,0 +1,6 @@
+hosts = {{ DATABASE_HOSTNAME }}:{{ DATABASE_PORT }}
+user = {{ DATABASE_USERNAME }}
+password = {{ DATABASE_PASSWORD }}
+dbname = {{ DATABASE_NAME }}
+
+query = SELECT 1 FROM virtual_domains WHERE name='%s'

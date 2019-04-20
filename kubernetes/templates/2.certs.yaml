@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Values.name }}-tls
+  namespace: {{ .Values.namespace }}
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+    - secretName: tls-postfix
+      hosts:
+        - "{{ .Values.server.hostname }}"
+  rules:
+    - host: "{{ .Values.server.hostname }}"

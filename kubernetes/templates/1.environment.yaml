@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
+data:
+  ENTRYPOINT_DEBUG: ""
+  SERVER_DOMAIN: "{{ .Values.server.domain }}"
+  SERVER_HOSTNAME: "{{ .Values.server.hostname }}"
+  MESSAGE_SIZE_LIMIT: "{{ .Values.server.message_size_limit }}"
+  RELAY_NETS: "{{ .Values.server.relay_nets }}"
+  RELAY_HOST: "{{ .Values.server.relay_host }}"
+  RECIPIENT_DELIMITER: "{{ .Values.server.recipient_delimiter }}"
+  LOGGING_LEVEL: "{{ .Values.logging_level }}"
+  INTERNAL_SMTPD_PORT: "{{ .Values.port.plain_smtpd }}"
+
+  DATABASE_HOSTNAME: {{ quote (coalesce .Values.database.hostname (print "database." .Values.namespace)) }}
+  DATABASE_USERNAME: "root"
+  DATABASE_PASSWORD: "some_secure_root_password"
+  DATABASE_NAME: {{ quote (coalesce .Values.database.name .Values.namespace | replace "-" "_") }}
+  DATABASE_PORT: "{{ .Values.database.port }}"
+
+  LMTP_HOSTNAME: {{ quote (coalesce .Values.lmtp.hostname (print "dovecot." .Values.namespace)) }}
+  LMTP_PORT: "{{ .Values.lmtp.port }}"
+
+  OPENDKIM_HOSTNAME: {{ quote (coalesce .Values.opendkim.hostname (print "opendkim." .Values.namespace)) }}
+  OPENDKIM_PORT: "{{ .Values.opendkim.port }}"
+
+  RSPAMD_HOSTNAME: {{ quote (coalesce .Values.rspamd.hostname (print "rspamd." .Values.namespace)) }}
+  RSPAMD_PORT: "{{ .Values.rspamd.port }}"

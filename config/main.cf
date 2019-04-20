@@ -1,0 +1,186 @@
+###############
+# General
+###############
+
+# disable all the backwards compatibility stuff
+compatibility_level = 2
+debug_peer_level = 100
+
+# Main domain and hostname
+mydomain = {{ SERVER_DOMAIN }}
+myhostname = {{ SERVER_HOSTNAME }}
+myorigin = $mydomain
+
+# Message size limit
+message_size_limit = {{ MESSAGE_SIZE_LIMIT }}
+
+# Relayed networks
+mynetworks = 127.0.0.1/32 [::1]/128 {{ RELAY_NETS }}
+
+# Empty alias list to override the configuration variable and disable NIS
+alias_maps =
+
+# Only accept virtual emails
+mydestination =
+
+# Disable the SMTP VRFY command. This stops some techniques used to harvest email addresses.
+disable_vrfy_command = yes
+
+# Relayhost if any is configured
+#relayhost = {{ RELAY_HOST }}
+
+# Recipient delimiter for extended addresses
+recipient_delimiter = {{ RECIPIENT_DELIMITER }}
+
+# Default Mailbox size, is set to 0 which means unlimited!
+mailbox_size_limit = 0
+virtual_mailbox_limit = 0
+
+# readme_directory: The location of the Postfix README files.
+#
+readme_directory = no
+
+# The inet_interfaces parameter specifies the network interface
+# addresses that this mail system receives mail on.  By default,
+# the software claims all active interfaces on the machine. The
+# parameter also controls delivery of mail to user@[ip.address].
+#
+# See also the proxy_interfaces parameter, for network addresses that
+# are forwarded to us via a proxy or network address translator.
+#
+# Note: you need to stop/start Postfix when this parameter changes.
+#
+inet_interfaces = all
+#inet_interfaces = $myhostname
+#inet_interfaces = $myhostname, localhost
+
+inet_protocols = all
+
+# This is required to support the proxy protocol to acquire the correct source ip address from whoever is connecting to this server
+# It's really important to get this information because otherwise ALL your connections will come from your internal ip address
+# Guess what you allow to send emails, without question? Thats right! You're $mynetworks. Which means because you cannot get the
+# correct source ip address, it permits EVERYBODY TO SEND EMAIL THROUGH YOUR SERVER! You basically become an open relay
+postscreen_upstream_proxy_protocol = haproxy
+postscreen_upstream_proxy_timeout = 10s
+
+###############
+### Reject codes == 554
+###############
+access_map_reject_code = 554
+invalid_hostname_reject_code = 554
+maps_rbl_reject_code = 554
+multi_recipient_bounce_reject_code = 554
+non_fqdn_reject_code = 554
+plaintext_reject_code = 554
+reject_code = 554
+relay_domains_reject_code = 554
+unknown_address_reject_code = 554
+unknown_client_reject_code = 450
+unknown_hostname_reject_code = 450
+unknown_local_recipient_reject_code = 554
+unknown_relay_recipient_reject_code = 554
+unknown_virtual_alias_reject_code = 554
+unknown_virtual_mailbox_reject_code = 554
+unverified_recipient_reject_code = 554
+unverified_sender_reject_code = 554
+
+###############
+# SMTP Server
+###############
+### Tarpit those bots/clients/spammers who send errors or scan for accounts
+smtpd_error_sleep_time = 20
+smtpd_soft_error_limit = 1
+smtpd_hard_error_limit = 3
+smtpd_junk_command_limit = 2
+# Configure the SASL auth that should be used
+smtpd_sasl_path = inet:{{ LMTP_HOSTNAME }}:{{ LMTP_PORT }}
+smtpd_sasl_type = dovecot
+smtpd_tls_security_level = may
+# Let's Encrypt certificate file
+smtpd_tls_cert_file = /etc/certs/tls.crt
+# Let's Encrypt key file
+smtpd_tls_key_file  = /etc/certs/tls.key
+
+###############
+# Virtual
+###############
+
+# MySQL configuration
+mysql = mysql:${config_directory}
+
+# The alias map actually returns both aliases and local mailboxes, which is
+# required for reject_unlisted_sender to work properly
+virtual_mailbox_domains = ${mysql}/mysql_virtual_mailbox_domains.cf
+virtual_mailbox_maps = ${mysql}/mysql_virtual_mailbox_maps.cf
+virtual_alias_maps = ${mysql}/mysql_virtual_alias_maps.cf
+
+# Mails are transported if required, then forwarded to Dovecot for delivery
+virtual_transport = lmtp:inet:{{ LMTP_HOSTNAME }}:{{ LMTP_PORT }}
+
+# In order to prevent Postfix from running DNS query, enforce the use of the
+# native DNS stack, that will check /etc/hosts properly.
+lmtp_host_lookup = native
+
+###############
+# OpenDKIM
+###############
+
+milter_default_action = accept
+milter_protocol = 2
+smtpd_milters = inet:{{ OPENDKIM_HOSTNAME }}:{{ OPENDKIM_PORT }}
+non_smtpd_milters = inet:{{ OPENDKIM_HOSTNAME }}:{{ OPENDKIM_PORT }}
+
+###############
+# Restrictions
+###############
+
+# Require that a remote SMTP client introduces itself at the beginning of an SMTP session with the HELO or EHLO command
+smtpd_helo_required = yes
+
+# It allows Postfix to log recipient address information when rejecting a client name/address or sender address, so that it is possible to find out whose mail is being rejected.
+smtpd_delay_reject = no
+
+# Allow connections from trusted networks only.
+#smtpd_client_restrictions =
+# permit_mynetworks,
+# reject
+
+smtpd_helo_restrictions =
+  # Reject email when the HELO/EHLO hostname has neither DNS A record nor MX record
+  permit_mynetworks
+  reject_unknown_helo_hostname
+  reject_non_fqdn_helo_hostname
+  reject_invalid_helo_hostname
+
+smtpd_sender_restrictions =
+  # Reject email when the MAIL FROM address has neither a DNS A nor MX record
+  reject_unknown_sender_domain
+  # Reject email when the MAIL FROM address is not in fully-qualified domain form
+  reject_non_fqdn_sender
+
+smtpd_recipient_restrictions =
+  # Reject email when the RCPT TO address is not in fully-qualified domain form
+  reject_non_fqdn_recipient
+  # Reject email when the RCPT TO address has neither a DNS A nor MX record
+  reject_unknown_recipient_domain
+  # Accept connections from local users on our network.
+  permit_mynetworks
+  # Rejects an email if the client IP address has no PTR record
+  reject_unknown_reverse_client_hostname
+  # Reject emails from hosts that don’t have valid A record,
+  reject_unknown_client_hostname
+  permit
+
+smtpd_relay_restrictions =
+  # Accept connections from local users on our network.
+  permit_mynetworks
+  # Permit only if authenticated by SASL
+  #permit_sasl_authenticated
+  # The next line, reject_unauth_destination, is critically important as it tells postfix not
+  # to accept messages with recipients at domains that are not hosted locally or that we serve as a backup server for. Without this line, our server would be an open relay.
+  reject_unauth_destination
+
+# Block clients that speak too early.
+smtpd_data_restrictions = reject_unauth_pipelining
+
+unverified_recipient_reject_reason = Address lookup failure

@@ -1,0 +1,52 @@
+image: registry.gitlab.antimatter-studios.com/antimatter-studios/kubernetes-gitlab-deployer/image:531
+
+services:
+  - docker:dind
+
+before_script:
+  - docker info
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://localhost:2375
+  NAMESPACE: mail-server
+  NAME: postfix
+  REPLICAS: 1
+
+stages:
+  - build
+  - deploy
+
+.login_docker: &login_docker
+  echo ${CI_JOB_TOKEN} | docker login -u gitlab-ci-token --password-stdin ${CI_REGISTRY}
+
+build:
+  stage: build
+  script:
+    - *login_docker
+    - docker build --pull -t ${CI_REGISTRY_IMAGE}/${NAME}:${CI_PIPELINE_ID} $PWD
+    - docker push ${CI_REGISTRY_IMAGE}/${NAME}:${CI_PIPELINE_ID}
+    - docker tag ${CI_REGISTRY_IMAGE}/${NAME}:${CI_PIPELINE_ID} ${CI_REGISTRY_IMAGE}/${NAME}:latest
+    - docker push ${CI_REGISTRY_IMAGE}/${NAME}:latest
+
+deploy:
+  stage: deploy
+  dependencies:
+    - build
+  script:
+    - echo ${CI_KUBECONFIG} | base64 -d > $PWD/kubeconfig
+    - export KUBECONFIG=$PWD/kubeconfig
+    - kubectl get pods --all-namespaces
+    - kubectl -n ${NAMESPACE} scale --replicas=0 deployment/${NAME} || true
+    - kubectl -n ${NAMESPACE} get deployments
+    - helm template
+      -f $PWD/values.yaml
+      --set name=${NAME}
+      --set namespace=${NAMESPACE}
+      --set repository=${CI_REGISTRY_IMAGE}/${NAME}:${CI_PIPELINE_ID}
+      --set registry=${CI_REGISTRY}
+      --set username=${CI_DEPLOY_USERNAME}
+      --set password=${CI_DEPLOY_PASSWORD}
+      $PWD/kubernetes | kubectl apply -f -
+    - kubectl -n ${NAMESPACE} scale --replicas=${REPLICAS} deployment/${NAME}
+    - kubectl -n ${NAMESPACE} get deployments

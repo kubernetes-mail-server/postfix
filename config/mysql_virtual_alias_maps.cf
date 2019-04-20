@@ -1,0 +1,19 @@
+hosts = {{ DATABASE_HOSTNAME }}:{{ DATABASE_PORT }}
+user = {{ DATABASE_USERNAME }}
+password = {{ DATABASE_PASSWORD }}
+dbname = {{ DATABASE_NAME }}
+
+query =
+    select alias.dst as email from (
+        select
+            concat(u.username,'@',d.name) as src,
+            a.email as dst
+        from
+            virtual_aliases as a
+        inner join
+            virtual_users as u on u.id = a.user_id
+        inner join
+            virtual_domains as d on d.id = u.domain_id
+        having
+            src = '%s'
+    ) as alias

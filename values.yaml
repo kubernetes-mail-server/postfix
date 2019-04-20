@@ -1,0 +1,35 @@
+server:
+  domain: "s2.antimatter-studios.com"
+  hostname: "s2.antimatter-studios.com"
+  message_size_limit: "50000000"
+  relay_nets: "10.0.0.0/8"
+  relay_host: ""
+  recipient_delimiter: "+"
+  logging_level: ""
+
+port:
+  haproxy_smtpd: "25"
+  plain_smtpd: "10025"
+
+lmtp:
+  help: "uncomment and define the 'hostname' field if you do not want to use the default, auto-calculated value"
+  # hostname: "dovecot.mail-server"
+  port: "24"
+
+opendkim:
+  help: "uncomment and define the 'hostname' field if you do not want to use the default, auto-calculated value"
+  # hostname: opendkim.mail-server
+  port: "8891"
+
+rspamd:
+  help: "uncomment and define the 'hostname' field if you do not want to use the default, auto-calculated value"
+  # hostname: "rspamd.mail-server"
+  port: "11332"
+
+database:
+  help: "uncomment and define the 'hostname' and 'name' field(s) if you do not want to use the default, auto-calculated value"
+  # hostname: "database.mail-server"
+  port: "3306"
+  username: "root"
+  password: "some_secure_root_password"
+  # name: "mail-server"

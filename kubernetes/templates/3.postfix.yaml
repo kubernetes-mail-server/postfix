@@ -1,0 +1,55 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.namespace }}
+        role: {{ .Values.name }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.name }}
+      containers:
+        - name: {{ .Values.name }}
+          image: {{ .Values.repository }}
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.name }}
+          ports:
+            - name: haproxy-smtpd
+              containerPort: {{ .Values.port.haproxy_smtpd }}
+              protocol: TCP
+            - name: plain-smtpd
+              containerPort: {{ .Values.port.plain_smtpd }}
+              protocol: TCP
+          volumeMounts:
+            - name: certificate
+              mountPath: /etc/certs/
+      volumes:
+        - name: certificate
+          secret:
+            secretName: tls-postfix
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: {{ .Values.namespace }}
+    role: {{ .Values.name }}
+  ports:
+    - name: haproxy-smtpd
+      port: {{ .Values.port.haproxy_smtpd }}
+      targetPort: {{ .Values.port.haproxy_smtpd }}
+    - name: plain-smtpd
+      port: {{ .Values.port.plain_smtpd }}
+      targetPort: {{ .Values.port.plain_smtpd }}
