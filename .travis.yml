@@ -57,6 +57,8 @@ jobs:
         - docker tag ${IMAGE} ${IMAGE}:${TRAVIS_TAG}
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push ${IMAGE}:${TRAVIS_TAG}
+        - docker tag ${IMAGE}:latest ${IMAGE}:${TRAVIS_BUILD_ID}
+        - docker push ${IMAGE}:${TRAVIS_BUILD_ID}
     - stage: deploy
       name: Deploy the master branch to the kubernetes cluster
       if: branch = master and type != pull_request
@@ -70,10 +72,6 @@ jobs:
             --set name=${NAME}
             --set namespace=${NAMESPACE}
             --set repository=${IMAGE}:${TRAVIS_BUILD_ID}
-            # If you need a custom docker registry, enter the details here (use encrypted variables or gitlab environment or something secure)
-            #--set registry=${CI_REGISTRY}
-            #--set username=${CI_DEPLOY_USERNAME}
-            #--set password=${CI_DEPLOY_PASSWORD}
             $PWD/kubernetes | kubectl apply -f -
         - kubectl scale --replicas=${REPLICAS} deployment/${NAME}
         - kubectl get deployments
