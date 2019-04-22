@@ -22,22 +22,9 @@ spec:
                 name: {{ .Values.name }}
             - configMapRef:
                 name: database-read
+            - configMapRef:
+                name: database-common
           env:
-            - name: "DATABASE_HOSTNAME"
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ .Values.namespace }}
-                  key: database.hostname
-            - name: "DATABASE_PORT"
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ .Values.namespace }}
-                  key: database.port
-            - name: "DATABASE_NAME"
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ .Values.namespace }}
-                  key: database.name
             - name: "LMTP_HOSTNAME"
               valueFrom:
                 configMapKeyRef:
