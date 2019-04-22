@@ -70,10 +70,10 @@ jobs:
             --set name=${NAME}
             --set namespace=${NAMESPACE}
             --set repository=${IMAGE}:${TRAVIS_BUILD_ID}
-# If you need a custom docker registry, enter the details here (use encrypted variables or gitlab environment or something secure)
-#            --set registry=${CI_REGISTRY}
-#            --set username=${CI_DEPLOY_USERNAME}
-#            --set password=${CI_DEPLOY_PASSWORD}
+            # If you need a custom docker registry, enter the details here (use encrypted variables or gitlab environment or something secure)
+            #--set registry=${CI_REGISTRY}
+            #--set username=${CI_DEPLOY_USERNAME}
+            #--set password=${CI_DEPLOY_PASSWORD}
             $PWD/kubernetes | kubectl apply -f -
         - kubectl scale --replicas=${REPLICAS} deployment/${NAME}
         - kubectl get deployments
