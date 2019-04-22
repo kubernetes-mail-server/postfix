@@ -21,17 +21,22 @@ jobs:
     - stage: tag master
       if: branch = master
       script: docker tag ${IMAGE} ${IMAGE}:latest
-    - stage: tag
+    - stage: tag version
       if: branch != master
       script: docker tag ${IMAGE} ${IMAGE}:${TRAVIS_TAG}
     - stage: login
-      if: env(TRAVIS_PULL_REQUEST) = false
+      name: Login to dockerhub
+      env: TRAVIS_PULL_REQUEST=false
       script: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - stage: push
-      if: env(TRAVIS_PULL_REQUEST) = false and branch = master
+      name: Push latest build
+      env: TRAVIS_PULL_REQUEST=false
+      if: branch=master
       script: docker push ${IMAGE}:latest
     - stage: push
-      if: env(TRAVIS_PULL_REQUEST) = false and branch != master
+      name: Push version build
+      env: TRAVIS_PULL_REQUEST=false
+      if: branch!=master
       script: docker push ${IMAGE}:${TRAVIS_TAG}
 
 
