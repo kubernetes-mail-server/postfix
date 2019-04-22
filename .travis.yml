@@ -22,7 +22,7 @@ jobs:
     - stage: tag
       name: Tag the master build as latest
       if: branch = master
-      script: docker tag ${IMAGE} ${IMAGE}:latest
+      script: docker images && echo "image($IMAGE)" && docker tag ${IMAGE} ${IMAGE}:latest
     - stage: tag
       name: Tag the version build using github tag name
       if: branch != master
