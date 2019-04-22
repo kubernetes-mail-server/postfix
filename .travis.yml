@@ -20,9 +20,11 @@ jobs:
       name: Build docker image
       script:
         - FILE=$HOME/docker-images/postfix-${TRAVIS_COMMIT}.tgz
+        - echo ${FILE}
         - docker build -t ${IMAGE} ${PWD}
         - mkdir -p $HOME/docker-images
         - docker save ${IMAGE} | gzip -c > ${FILE}
+        - ls -la $HOME/docker-images
     - stage: login
       name: Login to dockerhub
       env: TRAVIS_PULL_REQUEST=false
@@ -31,6 +33,8 @@ jobs:
       name: Tag and push the master build as latest
       if: branch = master
       script:
+        - ls -la $HOME/docker-images
+        - echo ${FILE}
         - if [[ -f ${FILE} ]]; then docker load -i ${FILE}; fi
         - docker images
         - docker tag ${IMAGE} ${IMAGE}:latest
@@ -39,6 +43,8 @@ jobs:
       name: Tag and push the version build using github tag name
       if: branch != master
       script:
+        - ls -la $HOME/docker-images
+        - echo ${FILE}
         - if [[ -f ${FILE} ]]; then docker load -i ${FILE}; fi
         - docker images
         - docker tag ${IMAGE} ${IMAGE}:${TRAVIS_TAG}
