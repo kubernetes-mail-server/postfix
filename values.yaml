@@ -1,10 +1,7 @@
 server:
-  domain: "s2.antimatter-studios.com"
-  hostname: "s2.antimatter-studios.com"
   message_size_limit: "50000000"
   relay_nets: "10.0.0.0/8"
   relay_host: ""
-  recipient_delimiter: "+"
   logging_level: ""
 
 port:

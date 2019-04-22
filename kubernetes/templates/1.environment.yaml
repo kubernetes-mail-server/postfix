@@ -5,12 +5,8 @@ metadata:
   namespace: {{ .Values.namespace }}
 data:
   ENTRYPOINT_DEBUG: ""
-  SERVER_DOMAIN: "{{ .Values.server.domain }}"
-  SERVER_HOSTNAME: "{{ .Values.server.hostname }}"
   MESSAGE_SIZE_LIMIT: "{{ .Values.server.message_size_limit }}"
   RELAY_NETS: "{{ .Values.server.relay_nets }}"
   RELAY_HOST: "{{ .Values.server.relay_host }}"
-  RECIPIENT_DELIMITER: "{{ .Values.server.recipient_delimiter }}"
   LOGGING_LEVEL: "{{ .Values.logging_level }}"
   INTERNAL_SMTPD_PORT: "{{ .Values.port.plain_smtpd }}"
-

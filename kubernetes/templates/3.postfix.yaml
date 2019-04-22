@@ -76,6 +76,21 @@ spec:
                 configMapKeyRef:
                   name: {{ .Values.namespace }}
                   key: rspamd.port
+            - name: "SERVER_DOMAIN"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: server.domain
+            - name: "SERVER_HOSTNAME"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: server.hostname
+            - name: "RECIPIENT_DELIMITER"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: general.recipient_delimiter
           ports:
             - name: haproxy-smtpd
               containerPort: {{ .Values.port.haproxy_smtpd }}
