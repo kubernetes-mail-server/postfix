@@ -27,7 +27,7 @@ jobs:
     - stage: push
       name: Tag and push the master build as latest
       if: branch = master
-      #env: TRAVIS_PULL_REQUEST=false
+      env: TRAVIS_PULL_REQUEST=false
       script:
         - ls -la ${CACHE_FOLDER}
         - if [[ -f ${CACHE_FILE} ]]; then docker load -i ${CACHE_FILE}; fi
@@ -38,7 +38,7 @@ jobs:
     - stage: push
       name: Tag and push the version build using github tag name
       if: branch != master
-      #env: TRAVIS_PULL_REQUEST=false
+      env: TRAVIS_PULL_REQUEST=false
       script:
         - ls -la ${CACHE_FOLDER}
         - if [[ -f ${CACHE_FILE} ]]; then docker load -i ${CACHE_FILE}; fi
