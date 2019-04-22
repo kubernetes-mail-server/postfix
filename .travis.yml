@@ -18,28 +18,30 @@ jobs:
   include:
     - stage: build
       name: Build docker image
-      script: docker build -t ${IMAGE} ${PWD}
-    - stage: tag
-      name: Tag the master build as latest
-      if: branch = master
-      script: docker images && echo "image($IMAGE)" && docker tag ${IMAGE} ${IMAGE}:latest
-    - stage: tag
-      name: Tag the version build using github tag name
-      if: branch != master
-      script: docker tag ${IMAGE} ${IMAGE}:${TRAVIS_TAG}
+      script:
+        - FILE=$HOME/docker-images/postfix-${TRAVIS_COMMIT}.tgz
+        - docker build -t ${IMAGE} ${PWD}
+        - mkdir -p $HOME/docker-images
+        - docker save ${IMAGE} | gzip -c > ${FILE}
     - stage: login
       name: Login to dockerhub
       env: TRAVIS_PULL_REQUEST=false
       script: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - stage: push
-      name: Push latest build
-      env: TRAVIS_PULL_REQUEST=false
-      if: branch=master
-      script: docker push ${IMAGE}:latest
+      name: Tag and push the master build as latest
+      if: branch = master
+      script:
+        - if [[ -f ${FILE} ]]; then docker load -i ${FILE}; fi
+        - docker images
+        - docker tag ${IMAGE} ${IMAGE}:latest
+        - docker push ${IMAGE}:latest
     - stage: push
-      name: Push version build
-      env: TRAVIS_PULL_REQUEST=false
-      if: branch!=master
-      script: docker push ${IMAGE}:${TRAVIS_TAG}
+      name: Tag and push the version build using github tag name
+      if: branch != master
+      script:
+        - if [[ -f ${FILE} ]]; then docker load -i ${FILE}; fi
+        - docker images
+        - docker tag ${IMAGE} ${IMAGE}:${TRAVIS_TAG}
+        - docker push ${IMAGE}:${TRAVIS_TAG}
 
 
