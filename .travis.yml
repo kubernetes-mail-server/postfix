@@ -29,6 +29,7 @@ jobs:
     - stage: push
       name: Tag and push the master build as latest
       if: branch = master
+      env: TRAVIS_PULL_REQUEST=false
       script:
         - ls -la ${CACHE_FOLDER}
         - echo ${CACHE_FILE}
@@ -40,6 +41,7 @@ jobs:
     - stage: push
       name: Tag and push the version build using github tag name
       if: branch != master
+      env: TRAVIS_PULL_REQUEST=false
       script:
         - ls -la ${CACHE_FOLDER}
         - echo ${CACHE_FILE}
