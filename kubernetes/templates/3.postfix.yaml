@@ -20,6 +20,32 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Values.name }}
+          env:
+            - name: "DATABASE_HOSTNAME"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: database.hostname
+            - name: "DATABASE_PORT"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: database.port
+            - name: "DATABASE_USERNAME"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: database.read_username
+            - name: "DATABASE_PASSWORD"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: database.read_password
+            - name: "DATABASE_NAME"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: database.name
           ports:
             - name: haproxy-smtpd
               containerPort: {{ .Values.port.haproxy_smtpd }}

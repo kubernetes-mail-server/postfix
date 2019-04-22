@@ -14,12 +14,6 @@ data:
   LOGGING_LEVEL: "{{ .Values.logging_level }}"
   INTERNAL_SMTPD_PORT: "{{ .Values.port.plain_smtpd }}"
 
-  DATABASE_HOSTNAME: {{ quote (coalesce .Values.database.hostname (print "database." .Values.namespace)) }}
-  DATABASE_USERNAME: "root"
-  DATABASE_PASSWORD: "some_secure_root_password"
-  DATABASE_NAME: {{ quote (coalesce .Values.database.name .Values.namespace | replace "-" "_") }}
-  DATABASE_PORT: "{{ .Values.database.port }}"
-
   LMTP_HOSTNAME: {{ quote (coalesce .Values.lmtp.hostname (print "dovecot." .Values.namespace)) }}
   LMTP_PORT: "{{ .Values.lmtp.port }}"
 

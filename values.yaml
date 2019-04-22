@@ -25,11 +25,3 @@ rspamd:
   help: "uncomment and define the 'hostname' field if you do not want to use the default, auto-calculated value"
   # hostname: "rspamd.mail-server"
   port: "11332"
-
-database:
-  help: "uncomment and define the 'hostname' and 'name' field(s) if you do not want to use the default, auto-calculated value"
-  # hostname: "database.mail-server"
-  port: "3306"
-  username: "root"
-  password: "some_secure_root_password"
-  # name: "mail-server"
