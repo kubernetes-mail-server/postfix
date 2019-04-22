@@ -25,30 +25,34 @@ jobs:
         - mkdir -p $HOME/docker-images
         - docker save ${IMAGE} | gzip -c > ${CACHE_FILE}
         - ls -la $HOME/docker-images
-    - stage: login
-      name: Login to dockerhub
-      env: TRAVIS_PULL_REQUEST=false
-      script: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - stage: push
       name: Tag and push the master build as latest
       if: branch = master
+      env: TRAVIS_PULL_REQUEST=false
       script:
         - ls -la $HOME/docker-images
         - echo ${CACHE_FILE}
         - if [[ -f ${CACHE_FILE} ]]; then docker load -i ${CACHE_FILE}; fi
         - docker images
         - docker tag ${IMAGE} ${IMAGE}:latest
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push ${IMAGE}:latest
     - stage: push
       name: Tag and push the version build using github tag name
       if: branch != master
+      env: TRAVIS_PULL_REQUEST=false
       script:
         - ls -la $HOME/docker-images
         - echo ${CACHE_FILE}
         - if [[ -f ${CACHE_FILE} ]]; then docker load -i ${CACHE_FILE}; fi
         - docker images
         - docker tag ${IMAGE} ${IMAGE}:${TRAVIS_TAG}
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push ${IMAGE}:${TRAVIS_TAG}
+    - stage: cleanup
+      name: Remove the docker image from the cache
+      script:
+        - rm -rf $HOME/docker-images/*
 
 cache:
   bundler: true
