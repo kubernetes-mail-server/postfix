@@ -21,6 +21,8 @@ spec:
             - configMapRef:
                 name: {{ .Values.name }}
             - configMapRef:
+                name: {{ .Values.namespace }}
+            - configMapRef:
                 name: database-read
             - configMapRef:
                 name: database-common
