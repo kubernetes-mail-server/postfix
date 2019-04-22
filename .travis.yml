@@ -7,12 +7,12 @@ language: generic
 
 env:
   global:
-    - IMAGE=kubernetesmailserver/postfix
-    - NAMESPACE=mail-server
     - NAME=postfix
+    - IMAGE=kubernetesmailserver/${IMAGE}
+    - NAMESPACE=mail-server
     - REPLICAS=1
     - CACHE_FOLDER=$HOME/docker-images
-    - CACHE_FILE=${CACHE_FOLDER}/postfix-${TRAVIS_COMMIT}.tgz
+    - CACHE_FILE=${CACHE_FOLDER}/${IMAGE}-${TRAVIS_COMMIT}.tgz
     - secure: "FhkFCGAGe+rhkmJg/Rf71BSvUcy5qsAoaHk950mbLB6VxQDtbgIkQhnkz+Ej0gOXZz575HYrAzbrD16BtBRsxUMLf/54+C82ehKBVny+9IKdOEOABgpZuTmaAX2ltneTKqKDIMO773e3/uvN+J4Hicr4/0MGR9/9Br8RSJI2PjVKWZtZYddUucOdP48muPYxE+FZEiulUdfXbQsGRT0V6aJlCryCevir7O1oqzPEi5TXldWnC5KaurSpDUb+bbCiCeMooPtSZiwIbJU8yDPxBJIJ7Rv2AafbFdPZ9AKBe6P/F6iEPESxwBw7tPjliuTZwRZ3GyDaENJ+Ep+vjT+a2/2zGNFcU0MceU+kYhqfgi2wl7EnwFVYLf4RQwCQV2d+Li2ZvqgJtUWDZD81bfoHtu4t05sGExFGRz8B+vnB4cnFa4AZarrmIsowvmCiMPjAKheLySp4ugxS8hYyBOSLbBpv4qDi/7MhQRREhbdDA/JUnbrUWpsr5wY5v14AWB5V955WtVkBgmpvOXs6igfaDi6YA6F0E5zYxG6KxHMbxqkz8GCosHB5QM0jAy28YBMP/cbR//jYZXfKpNWZYUL0Dhr8Q3yBMQPqFiCm3fR/LnTDrDBMZYZrB/9k6wxry3noi1Vop5MLdDmS53Mpz575yvGh1ddkGF1GxTpQ6VULF5w="
     - secure: "PhIspy1PLCJk+oeAW/KmnOLoGK+AknkRErunmfzS4RL7x8ivApDqA3VOWlmoKM5AuI+rYMU5NI+lHf2Ab5nGnPWhIbguxcQaDJdjqhLD1IoPr1ouh8YjFSl4RP1ScE5VNAVpKMeTzg5JesM9tsiG012/Nq5XJSOEHjY/oLnhDdqSNreVQLRzOdqGJL+3mPTENeKnRr39k6pUOZunHMGjmRpJZMHUwfPsYg2ftcdxgh7nr7wXkplJ3L6qZJv/mCx/XP2bpJzzDF5xCkeDIAVbaL7kjhF8Wwb/nQy+C/7QSaWlP4WEsyjgI6ril+ruagv7bWhkKVAThSfPkQ7Wr4aXX0wgi4cxZvuiKhOlSOyteO1NdAz/phcHrvjeznVlUNYUn+3l89oRI8S/xcjvmOBT4+vGKQ3esTn/67C1U49a/6i11jfPL7V8tY2beD3xQOIylrdEhG1vbKrKdwoZ/8M0PVGaj5lXo2PVfJ4s/OgSrhgfCGxRGOBJ+85WcOxTJW/h9tDRi3DFHDpvJPrSE7WLbdYOyUZWngX9jjYUbvDVMwbFKTS3W4QAaKjMn9JLN8aeBBdMXScgswsGtwd7lurDyomBMazYFj5LAlLxa6FIDhwiBeDRJUoTOo0gR/Mr5HZVjb4zj5hMCbgayj9zmRNcdUekUspuzBYvCemhFycq9Wg="
 
