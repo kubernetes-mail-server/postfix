@@ -24,10 +24,9 @@ jobs:
         - docker build -t ${IMAGE} ${PWD}
         - mkdir -p ${CACHE_FOLDER}
         - docker save ${IMAGE} | gzip -c > ${CACHE_FILE}
-        - echo "travis pull request value = ${TRAVIS_PULL_REQUEST}"
     - stage: push
       name: Tag and push the master build as latest
-      if: branch = master AND env(TRAVIS_PULL_REQUEST) = false
+      if: branch = master AND type != pull_request
       script:
         - ls -la ${CACHE_FOLDER}
         - if [[ -f ${CACHE_FILE} ]]; then docker load -i ${CACHE_FILE}; fi
@@ -37,7 +36,7 @@ jobs:
         - docker push ${IMAGE}:latest
     - stage: push
       name: Tag and push the version build using github tag name
-      if: branch != master AND env(TRAVIS_PULL_REQUEST) = false
+      if: branch != master AND type != pull_request
       script:
         - ls -la ${CACHE_FOLDER}
         - if [[ -f ${CACHE_FILE} ]]; then docker load -i ${CACHE_FILE}; fi
