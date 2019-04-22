@@ -1,0 +1,37 @@
+sudo: required
+
+services:
+  - docker
+
+language: generic
+
+env:
+  global:
+    - IMAGE=kubernetesmailserver/postfix
+    - NAMESPACE=mail-server
+    - NAME=postfix
+    - REPLICAS=1
+    - secure: "WE2bsibgpwe9jJAbY4LgmS9kxerxTD3gdPy/QKNdDvCoDl9YhttiJzrWYlaeiMk/uOABUDCKKbEH+CQvDA2VI6nUPAzPwPeQV9qFmeHrjLJrXSsbphTQaIycqrLnu/m44vSgPtSPIV4vrqwDpmgAaFj5iUx8bO85dYggApS+cZDMVASK2OQ6quQh1f3lKVoioXXuUyGPBhvU34REljIxduwy7am6h82uKrBdrDb+F8JKu1oKZoQUyYbCRlj5FzqJm3r38pkoeWyFu6Rld1sqS57bo+wK54sF/xZW4M59kCmfdwvnSxZQrn+JRQ4ty7gTKZon5sfbzC3scye5wjNEEm8UVNfCk/1aGs17o2+8KLdX0j6l+mafOPLaJlXmegn/4SuH7lzN3j6gh6As+xriuPk9xCsjzm+Iy+Nipp+Ah/40hkYu63HMfqKjXh60XimkQv8axFdEqeNaDgmjw1wrg5LoLzX850kiRlD8CaNTHzPiaBaHAbKte+ayvmR8xjDC48/RcBx7jeGDBmjCf/mZXv+bbxaFQjcLvVn0xq5uTWn+PaAHYICopaOLtQle4YKmwdv0QR0QDUiZi6qU2FaPBsTfpiNvdytGMK7IyAznueM3f6DOeVbJeqtarqzdUT9rrPmJz7bL+87k3hvom5gz7G3+q2rRfjld5QiMp7AkvJw="
+    - secure: "r1bLrCoG3/sEGzEZ9bsBLkSr8vssoZNP3O2bxon7eFKbWFDTWvc9bBDfxsB7pKGaobrYcmwiLEQ6ceMPml/62h1TvsEvm3iS9hfXqIfu6wLRbV1ZwnubVyceYKCDDQSagYJkU9eiuar/0oGFxePPZ141IZoVfD8xA3bTOCaOCGrEU+SLNGj0NBy5muYO02zniHP7xyb/Oc8oNHDe7J7fB04Ez/C8+ZPv1MVqs8Ogp3LcjnALRU74qxaDJsHFPksXf0l41eD7/cDGBKSL3CeZsxzKd5ZEHFmmfN3o23i4kfGM6N1PbIM0F6yyPJKGhkWaA1UQUe2r+ftciKoilh1axSmauymYUxSL6B4bHzfbo86lBlwpUqsBtqir06FhpS9Hp3Uo8QaxNwJ/z7q3cf4ohn0Xbc5CRLAVpojtSEy2+wa57PYU8vUaaFEku8oY14aL1QnY4+iC60WSL2pEBgHMAn7BFonyQcBTBASl71BIAvOTKmYbMcgcGT52CUEVciOmlKb5D+NrDFW6PET1L03pq28Q7/3Sqm7RBXACBPQeW81+9W7wjOi2qbSX3Qpdn9XmPdTqeJOwwbyLRYouzNhDcHbX3qIF46Nj/1aDHD37MArp6Ig5zz4Y0ZwB+NPxVI9GiaR0TEO/9JQHbK+E3GFVe1d3yBHLiScNknzzl9m/Pw4="
+
+jobs:
+  include:
+    - stage: build
+      script: docker build --pub -t ${IMAGE} ${PWD}
+    - stage: tag
+      if: branch = master
+      script: docker tag ${IMAGE} ${IMAGE}:latest
+    - stage: tag
+      if: branch != master
+      script: docker tag ${IMAGE} ${IMAGE}:${TRAVIS_TAG}
+    - stage: login
+      if: env(TRAVIS_PULL_REQUEST) = false
+      script: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - stage: push
+      if: env(TRAVIS_PULL_REQUEST) = false and branch = master
+      script: docker push ${IMAGE}:latest
+    - stage: push
+      if: env(TRAVIS_PULL_REQUEST) = false and branch != master
+      script: docker push ${IMAGE}:${TRAVIS_TAG}
+
+
