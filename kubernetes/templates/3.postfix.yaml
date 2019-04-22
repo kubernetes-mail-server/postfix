@@ -20,6 +20,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ .Values.name }}
+            - configMapRef:
+                name: database-read
           env:
             - name: "DATABASE_HOSTNAME"
               valueFrom:
@@ -31,16 +33,6 @@ spec:
                 configMapKeyRef:
                   name: {{ .Values.namespace }}
                   key: database.port
-            - name: "DATABASE_USERNAME"
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ .Values.namespace }}
-                  key: database.read_username
-            - name: "DATABASE_PASSWORD"
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ .Values.namespace }}
-                  key: database.read_password
             - name: "DATABASE_NAME"
               valueFrom:
                 configMapKeyRef:
