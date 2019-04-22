@@ -21,18 +21,15 @@ jobs:
     - stage: build
       name: Build docker image
       script:
-        - echo ${CACHE_FILE}
         - docker build -t ${IMAGE} ${PWD}
-        - mkdir -p $HOME/docker-images
+        - mkdir -p ${CACHE_FOLDER}
         - docker save ${IMAGE} | gzip -c > ${CACHE_FILE}
-        - ls -la ${CACHE_FOLDER}
     - stage: push
       name: Tag and push the master build as latest
       if: branch = master
       env: TRAVIS_PULL_REQUEST=false
       script:
         - ls -la ${CACHE_FOLDER}
-        - echo ${CACHE_FILE}
         - if [[ -f ${CACHE_FILE} ]]; then docker load -i ${CACHE_FILE}; fi
         - docker images
         - docker tag ${IMAGE} ${IMAGE}:latest
@@ -44,12 +41,15 @@ jobs:
       env: TRAVIS_PULL_REQUEST=false
       script:
         - ls -la ${CACHE_FOLDER}
-        - echo ${CACHE_FILE}
         - if [[ -f ${CACHE_FILE} ]]; then docker load -i ${CACHE_FILE}; fi
         - docker images
         - docker tag ${IMAGE} ${IMAGE}:${TRAVIS_TAG}
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push ${IMAGE}:${TRAVIS_TAG}
+    - stage: cleanup
+      name: Remove the docker image from the cache
+      script:
+        - rm -rf ${CACHE_FILE}
 
 cache:
   bundler: true
