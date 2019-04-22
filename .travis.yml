@@ -56,5 +56,6 @@ jobs:
         - rm -rf ${CACHE_FOLDER}/*
 
 cache:
+  bundler: true
   directories:
     - ${CACHE_FOLDER}
