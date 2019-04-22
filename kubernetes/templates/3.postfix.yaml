@@ -81,11 +81,6 @@ spec:
                 configMapKeyRef:
                   name: {{ .Values.namespace }}
                   key: server.domain
-            - name: "SERVER_HOSTNAME"
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ .Values.namespace }}
-                  key: server.hostname
             - name: "RECIPIENT_DELIMITER"
               valueFrom:
                 configMapKeyRef:

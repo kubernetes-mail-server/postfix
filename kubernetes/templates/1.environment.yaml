@@ -10,3 +10,6 @@ data:
   RELAY_HOST: "{{ .Values.server.relay_host }}"
   LOGGING_LEVEL: "{{ .Values.logging_level }}"
   INTERNAL_SMTPD_PORT: "{{ .Values.port.plain_smtpd }}"
+
+  # required by ingress to create the ssl certificate
+  SERVER_HOSTNAME: "{{ .Values.server.hostname }}"
