@@ -17,8 +17,8 @@ env:
 jobs:
   include:
     - stage: build
-      script: docker build --pub -t ${IMAGE} ${PWD}
-    - stage: tag
+      script: docker build -t ${IMAGE} ${PWD}
+    - stage: tag master
       if: branch = master
       script: docker tag ${IMAGE} ${IMAGE}:latest
     - stage: tag
