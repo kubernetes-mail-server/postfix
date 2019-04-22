@@ -45,6 +45,8 @@ jobs:
         - docker tag ${IMAGE} ${IMAGE}:latest
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push ${IMAGE}:latest
+        - docker tag ${IMAGE}:latest ${IMAGE}:${TRAVIS_BUILD_ID}
+        - docker push ${IMAGE}:${TRAVIS_BUILD_ID}
     - stage: push
       name: Tag and push the version build using github tag name
       if: branch != master AND type != pull_request
@@ -60,20 +62,21 @@ jobs:
       if: branch = master and type != pull_request
       script:
         - export KUBECONFIG=$PWD/kubeconfig
-        - kubectl get pods --all-namespaces
-        - kubectl -n ${NAMESPACE} scale --replicas=0 deployment/${NAME} || true
-        - kubectl -n ${NAMESPACE} get deployments
+        - kubectl get pods
+        - kubectl scale --replicas=0 deployment/${NAME} || true
+        - kubectl get deployments
         - helm template
             -f $PWD/values.yaml
             --set name=${NAME}
             --set namespace=${NAMESPACE}
-            --set repository=${CI_REGISTRY_IMAGE}/${NAME}:${CI_PIPELINE_ID}
-            --set registry=${CI_REGISTRY}
-            --set username=${CI_DEPLOY_USERNAME}
-            --set password=${CI_DEPLOY_PASSWORD}
+            --set repository=${IMAGE}:${TRAVIS_BUILD_ID}
+# If you need a custom docker registry, enter the details here (use encrypted variables or gitlab environment or something secure)
+#            --set registry=${CI_REGISTRY}
+#            --set username=${CI_DEPLOY_USERNAME}
+#            --set password=${CI_DEPLOY_PASSWORD}
             $PWD/kubernetes | kubectl apply -f -
-        - kubectl -n ${NAMESPACE} scale --replicas=${REPLICAS} deployment/${NAME}
-        - kubectl -n ${NAMESPACE} get deployments
+        - kubectl scale --replicas=${REPLICAS} deployment/${NAME}
+        - kubectl get deployments
     - stage: cleanup
       name: Remove the docker image from the cache
       script:

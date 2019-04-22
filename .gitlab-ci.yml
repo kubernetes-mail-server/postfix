@@ -1,4 +1,4 @@
-image: registry.gitlab.antimatter-studios.com/antimatter-studios/kubernetes-gitlab-deployer/image:531
+image: christhomas/pipeline-deployer:latest
 
 services:
   - docker:dind
