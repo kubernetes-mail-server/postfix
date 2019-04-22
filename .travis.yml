@@ -16,6 +16,17 @@ env:
     - secure: "FhkFCGAGe+rhkmJg/Rf71BSvUcy5qsAoaHk950mbLB6VxQDtbgIkQhnkz+Ej0gOXZz575HYrAzbrD16BtBRsxUMLf/54+C82ehKBVny+9IKdOEOABgpZuTmaAX2ltneTKqKDIMO773e3/uvN+J4Hicr4/0MGR9/9Br8RSJI2PjVKWZtZYddUucOdP48muPYxE+FZEiulUdfXbQsGRT0V6aJlCryCevir7O1oqzPEi5TXldWnC5KaurSpDUb+bbCiCeMooPtSZiwIbJU8yDPxBJIJ7Rv2AafbFdPZ9AKBe6P/F6iEPESxwBw7tPjliuTZwRZ3GyDaENJ+Ep+vjT+a2/2zGNFcU0MceU+kYhqfgi2wl7EnwFVYLf4RQwCQV2d+Li2ZvqgJtUWDZD81bfoHtu4t05sGExFGRz8B+vnB4cnFa4AZarrmIsowvmCiMPjAKheLySp4ugxS8hYyBOSLbBpv4qDi/7MhQRREhbdDA/JUnbrUWpsr5wY5v14AWB5V955WtVkBgmpvOXs6igfaDi6YA6F0E5zYxG6KxHMbxqkz8GCosHB5QM0jAy28YBMP/cbR//jYZXfKpNWZYUL0Dhr8Q3yBMQPqFiCm3fR/LnTDrDBMZYZrB/9k6wxry3noi1Vop5MLdDmS53Mpz575yvGh1ddkGF1GxTpQ6VULF5w="
     - secure: "PhIspy1PLCJk+oeAW/KmnOLoGK+AknkRErunmfzS4RL7x8ivApDqA3VOWlmoKM5AuI+rYMU5NI+lHf2Ab5nGnPWhIbguxcQaDJdjqhLD1IoPr1ouh8YjFSl4RP1ScE5VNAVpKMeTzg5JesM9tsiG012/Nq5XJSOEHjY/oLnhDdqSNreVQLRzOdqGJL+3mPTENeKnRr39k6pUOZunHMGjmRpJZMHUwfPsYg2ftcdxgh7nr7wXkplJ3L6qZJv/mCx/XP2bpJzzDF5xCkeDIAVbaL7kjhF8Wwb/nQy+C/7QSaWlP4WEsyjgI6ril+ruagv7bWhkKVAThSfPkQ7Wr4aXX0wgi4cxZvuiKhOlSOyteO1NdAz/phcHrvjeznVlUNYUn+3l89oRI8S/xcjvmOBT4+vGKQ3esTn/67C1U49a/6i11jfPL7V8tY2beD3xQOIylrdEhG1vbKrKdwoZ/8M0PVGaj5lXo2PVfJ4s/OgSrhgfCGxRGOBJ+85WcOxTJW/h9tDRi3DFHDpvJPrSE7WLbdYOyUZWngX9jjYUbvDVMwbFKTS3W4QAaKjMn9JLN8aeBBdMXScgswsGtwd7lurDyomBMazYFj5LAlLxa6FIDhwiBeDRJUoTOo0gR/Mr5HZVjb4zj5hMCbgayj9zmRNcdUekUspuzBYvCemhFycq9Wg="
 
+before_install:
+  - openssl aes-256-cbc -K $encrypted_a5ffa9039894_key -iv $encrypted_a5ffa9039894_iv -in kubeconfig.enc -out kubeconfig -d
+  - KUBE_LATEST_VERSION="v1.14.1"
+  - HELM_LATEST_VERSION="v2.13.1"
+  - HELM=https://storage.googleapis.com/kubernetes-helm/helm-${HELM_LATEST_VERSION}-linux-amd64.tar.gz
+  - KUBECTL=https://storage.googleapis.com/kubernetes-release/release/${KUBE_LATEST_VERSION}/bin/linux/amd64/kubectl
+  - curl -L ${KUBECTL} -o $PWD/kubectl
+  - curl -L ${HELM} | tar xzO linux-amd64/helm > $PWD/helm
+  - chmod +x $PWD/helm $PWD/kubectl
+  - export -p PATH=$PATH:$PWD
+
 jobs:
   include:
     - stage: build
@@ -44,11 +55,29 @@ jobs:
         - docker tag ${IMAGE} ${IMAGE}:${TRAVIS_TAG}
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push ${IMAGE}:${TRAVIS_TAG}
+    - stage: deploy
+      name: Deploy the master branch to the kubernetes cluster
+      if: branch = master and type != pull_request
+      script:
+        - export KUBECONFIG=$PWD/kubeconfig
+        - kubectl get pods --all-namespaces
+        - kubectl -n ${NAMESPACE} scale --replicas=0 deployment/${NAME} || true
+        - kubectl -n ${NAMESPACE} get deployments
+        - helm template
+            -f $PWD/values.yaml
+            --set name=${NAME}
+            --set namespace=${NAMESPACE}
+            --set repository=${CI_REGISTRY_IMAGE}/${NAME}:${CI_PIPELINE_ID}
+            --set registry=${CI_REGISTRY}
+            --set username=${CI_DEPLOY_USERNAME}
+            --set password=${CI_DEPLOY_PASSWORD}
+            $PWD/kubernetes | kubectl apply -f -
+        - kubectl -n ${NAMESPACE} scale --replicas=${REPLICAS} deployment/${NAME}
+        - kubectl -n ${NAMESPACE} get deployments
     - stage: cleanup
       name: Remove the docker image from the cache
       script:
         - rm -rf ${CACHE_FILE}
-
 
 cache:
   bundler: true
