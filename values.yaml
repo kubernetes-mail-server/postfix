@@ -11,17 +11,3 @@ port:
   haproxy_smtpd: "25"
   plain_smtpd: "10025"
 
-lmtp:
-  help: "uncomment and define the 'hostname' field if you do not want to use the default, auto-calculated value"
-  # hostname: "dovecot.mail-server"
-  port: "24"
-
-opendkim:
-  help: "uncomment and define the 'hostname' field if you do not want to use the default, auto-calculated value"
-  # hostname: opendkim.mail-server
-  port: "8891"
-
-rspamd:
-  help: "uncomment and define the 'hostname' field if you do not want to use the default, auto-calculated value"
-  # hostname: "rspamd.mail-server"
-  port: "11332"

@@ -46,6 +46,36 @@ spec:
                 configMapKeyRef:
                   name: {{ .Values.namespace }}
                   key: database.name
+            - name: "LMTP_HOSTNAME"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: lmtp.hostname
+            - name: "LMTP_PORT"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: lmtp.port
+            - name: "OPENDKIM_HOSTNAME"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: opendkim.hostname
+            - name: "OPENDKIM_PORT"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: opendkim.port
+            - name: "RSPAMD_HOSTNAME"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: rspamd.hostname
+            - name: "RSPAMD_PORT"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: rspamd.port
           ports:
             - name: haproxy-smtpd
               containerPort: {{ .Values.port.haproxy_smtpd }}
