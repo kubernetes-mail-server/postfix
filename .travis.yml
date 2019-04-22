@@ -44,6 +44,11 @@ jobs:
         - docker tag ${IMAGE} ${IMAGE}:${TRAVIS_TAG}
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push ${IMAGE}:${TRAVIS_TAG}
+    - stage: cleanup
+      name: Remove the docker image from the cache
+      script:
+        - rm -rf ${CACHE_FILE}
+
 
 cache:
   bundler: true
