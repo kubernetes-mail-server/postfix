@@ -34,10 +34,10 @@ spec:
                   key: general.recipient_delimiter
           ports:
             - name: haproxy-smtpd
-              containerPort: {{ .Values.port.haproxy_smtpd }}
+              containerPort: {{ .Values.haproxy_smtpd }}
               protocol: TCP
             - name: plain-smtpd
-              containerPort: {{ .Values.port.plain_smtpd }}
+              containerPort: {{ .Values.plain_smtpd }}
               protocol: TCP
           volumeMounts:
             - name: certificate
@@ -60,8 +60,8 @@ spec:
     role: {{ .Values.name }}
   ports:
     - name: haproxy-smtpd
-      port: {{ .Values.port.haproxy_smtpd }}
-      targetPort: {{ .Values.port.haproxy_smtpd }}
+      port: {{ .Values.haproxy_smtpd }}
+      targetPort: {{ .Values.haproxy_smtpd }}
     - name: plain-smtpd
-      port: {{ .Values.port.plain_smtpd }}
-      targetPort: {{ .Values.port.plain_smtpd }}
+      port: {{ .Values.plain_smtpd }}
+      targetPort: {{ .Values.plain_smtpd }}

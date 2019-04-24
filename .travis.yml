@@ -71,10 +71,10 @@ jobs:
         - helm template
             -f $PWD/values.yaml
             --set name=${NAME}
-            --set hostname=$(kubectl get configmap connection-map -o=jsonpath="{.data.HOSTNAME}")
-            --set port.haproxy_smtpd=$(kubectl get configmap connection-map -o=jsonpath="{.data.POSTFIX_PORT}")
-            --set port.plain_smtpd=$(kubectl get configmap connection-map -o=jsonpath="{.data.POSTFIX_SUBMISSION_PORT}")
             --set namespace=${NAMESPACE}
+            --set hostname=$(kubectl get configmap connection-map -o=jsonpath="{.data.HOSTNAME}")
+            --set haproxy_smtpd=$(kubectl get configmap connection-map -o=jsonpath="{.data.POSTFIX_PORT}")
+            --set plain_smtpd=$(kubectl get configmap connection-map -o=jsonpath="{.data.POSTFIX_SUBMISSION_PORT}")
             --set repository=${IMAGE}:${TRAVIS_BUILD_ID}
             $PWD/kubernetes | kubectl apply -f -
         - kubectl scale --replicas=${REPLICAS} deployment/${NAME}
