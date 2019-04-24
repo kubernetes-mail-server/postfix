@@ -45,8 +45,6 @@ jobs:
         - docker tag ${IMAGE} ${IMAGE}:latest
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push ${IMAGE}:latest
-        - docker tag ${IMAGE}:latest ${IMAGE}:${TRAVIS_BUILD_ID}
-        - docker push ${IMAGE}:${TRAVIS_BUILD_ID}
     - stage: push
       name: Tag and push the version build using github tag name
       if: branch != master AND type != pull_request
@@ -57,8 +55,6 @@ jobs:
         - docker tag ${IMAGE} ${IMAGE}:${TRAVIS_TAG}
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push ${IMAGE}:${TRAVIS_TAG}
-        - docker tag ${IMAGE}:latest ${IMAGE}:${TRAVIS_BUILD_ID}
-        - docker push ${IMAGE}:${TRAVIS_BUILD_ID}
     - stage: deploy
       name: Deploy the master branch to the kubernetes cluster
       if: branch = master and type != pull_request
