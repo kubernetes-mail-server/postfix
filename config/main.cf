@@ -93,7 +93,7 @@ smtpd_soft_error_limit = 1
 smtpd_hard_error_limit = 3
 smtpd_junk_command_limit = 2
 # Configure the SASL auth that should be used
-smtpd_sasl_path = inet:{{ DOVECOT_HOSTNAME }}:{{ DOVECOT_PORT }}
+smtpd_sasl_path = inet:{{ DOVECOT_HOSTNAME }}:{{ DOVECOT_LMTP }}
 smtpd_sasl_type = dovecot
 smtpd_tls_security_level = may
 # Let's Encrypt certificate file
@@ -115,7 +115,7 @@ virtual_mailbox_maps = ${mysql}/mysql_virtual_mailbox_maps.cf
 virtual_alias_maps = ${mysql}/mysql_virtual_alias_maps.cf
 
 # Mails are transported if required, then forwarded to Dovecot for delivery
-virtual_transport = lmtp:inet:{{ DOVECOT_HOSTNAME }}:{{ DOVECOT_PORT }}
+virtual_transport = lmtp:inet:{{ DOVECOT_HOSTNAME }}:{{ DOVECOT_LMTP }}
 
 # In order to prevent Postfix from running DNS query, enforce the use of the
 # native DNS stack, that will check /etc/hosts properly.

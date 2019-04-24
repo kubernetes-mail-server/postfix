@@ -67,7 +67,6 @@ jobs:
         - kubectl get pods
         - kubectl scale --replicas=0 deployment/${NAME} || true
         - kubectl get deployments
-        - a=$(kubectl get configmap connection-map -o 'jsonpath="{.data.HOSTNAME}"'); echo $a;
         - helm template
             -f $PWD/values.yaml
             --set name=${NAME}

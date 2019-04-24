@@ -36,7 +36,7 @@ for file in $(find /etc/postfix -type f); do
     required DATABASE_PORT ${file}
 
     required DOVECOT_HOSTNAME ${file}
-    required DOVECOT_PORT ${file}
+    required DOVECOT_LMTP ${file}
 
     required OPENDKIM_HOSTNAME ${file}
     required OPENDKIM_PORT ${file}
