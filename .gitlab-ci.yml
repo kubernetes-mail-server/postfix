@@ -37,16 +37,19 @@ deploy:
     - echo ${CI_KUBECONFIG} | base64 -d > $PWD/kubeconfig
     - export KUBECONFIG=$PWD/kubeconfig
     - kubectl get pods --all-namespaces
-    - kubectl -n ${NAMESPACE} scale --replicas=0 deployment/${NAME} || true
-    - kubectl -n ${NAMESPACE} get deployments
+    - kubectl scale --replicas=0 deployment/${NAME} || true
+    - kubectl get deployments
     - helm template
       -f $PWD/values.yaml
       --set name=${NAME}
       --set namespace=${NAMESPACE}
+      --set server.hostname=$(kubectl get configmap connection-map -o 'jsonpath="{.data.HOSTNAME}"')
+      --set port.haproxy_smtpd=$(kubectl get configmap connection-map -o 'jsonpath="{.data.POSTFIX_PORT}"')
+      --set port.plain_smtpd=$(kubectl get configmap connection-map -o 'jsonpath="{.data.POSTFIX_PORT}"')
       --set repository=${CI_REGISTRY_IMAGE}/${NAME}:${CI_PIPELINE_ID}
       --set registry=${CI_REGISTRY}
       --set username=${CI_DEPLOY_USERNAME}
       --set password=${CI_DEPLOY_PASSWORD}
       $PWD/kubernetes | kubectl apply -f -
-    - kubectl -n ${NAMESPACE} scale --replicas=${REPLICAS} deployment/${NAME}
-    - kubectl -n ${NAMESPACE} get deployments
+    - kubectl scale --replicas=${REPLICAS} deployment/${NAME}
+    - kubectl get deployments

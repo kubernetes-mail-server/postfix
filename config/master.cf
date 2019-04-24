@@ -2,8 +2,7 @@
 #                   (yes)   (yes)   (yes)   (never) (100)
 
 # Connections coming from dovecot
-{{ INTERNAL_SMTPD_PORT }}
-              inet  n       -       n       -       -       smtpd
+{{ INTERNAL_SMTPD_PORT }} inet  n       -       n       -       -       smtpd
 
 # Exposed SMTP service (postscreen support is needed to support the proxy protocol [search postscreen_upstream_proxy_protocol in main.cf])
 smtp          inet  n       -       -       -       1       postscreen
