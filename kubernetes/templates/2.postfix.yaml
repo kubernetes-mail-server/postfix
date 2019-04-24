@@ -23,7 +23,7 @@ spec:
             - configMapRef:
                 name: general
             - configMapRef:
-                name: connection-map
+                name: services-info
             - configMapRef:
                 name: database-read
             - configMapRef:

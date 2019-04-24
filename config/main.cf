@@ -12,10 +12,10 @@ myhostname = {{ HOSTNAME }}
 myorigin = $mydomain
 
 # Message size limit
-message_size_limit = {{ MESSAGE_SIZE_LIMIT }}
+message_size_limit = {{ POSTFIX_MESSAGE_SIZE_LIMIT }}
 
 # Relayed networks
-mynetworks = 127.0.0.1/32 [::1]/128 {{ RELAY_NETS }}
+mynetworks = 127.0.0.1/32 [::1]/128 {{ POSTFIX_RELAY_NETS }}
 
 # Empty alias list to override the configuration variable and disable NIS
 alias_maps =
@@ -27,7 +27,7 @@ mydestination =
 disable_vrfy_command = yes
 
 # Relayhost if any is configured
-#relayhost = {{ RELAY_HOST }}
+#relayhost = {{ POSTFIX_RELAY_HOST }}
 
 # Recipient delimiter for extended addresses
 recipient_delimiter = {{ RECIPIENT_DELIMITER }}

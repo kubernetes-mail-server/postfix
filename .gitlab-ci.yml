@@ -43,9 +43,9 @@ deploy:
       -f $PWD/values.yaml
       --set name=${NAME}
       --set namespace=${NAMESPACE}
-      --set hostname=$(kubectl get configmap connection-map -o=jsonpath="{.data.HOSTNAME}")
-      --set haproxy_smtpd=$(kubectl get configmap connection-map -o=jsonpath="{.data.POSTFIX_PORT}")
-      --set plain_smtpd=$(kubectl get configmap connection-map -o=jsonpath="{.data.POSTFIX_SUBMISSION_PORT}")
+      --set hostname=$(kubectl get cm services-info -o=jsonpath="{.data.HOSTNAME}")
+      --set haproxy_smtpd=$(kubectl get cm services-info -o=jsonpath="{.data.POSTFIX_PORT}")
+      --set plain_smtpd=$(kubectl get cm services-info -o=jsonpath="{.data.POSTFIX_SUBMISSION_PORT}")
       --set repository=${CI_REGISTRY_IMAGE}/${NAME}:${CI_PIPELINE_ID}
       --set registry=${CI_REGISTRY}
       --set username=${CI_DEPLOY_USERNAME}

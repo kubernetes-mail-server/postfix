@@ -22,11 +22,11 @@ function optional () {
 for file in $(find /etc/postfix -type f); do
     required DOMAIN ${file}
     required HOSTNAME ${file}
-    required MESSAGE_SIZE_LIMIT ${file}
-    required RELAY_NETS ${file}
-    optional RELAY_HOST ${file}
     required RECIPIENT_DELIMITER ${file}
-    optional LOGGING_LEVEL ${file}
+    required POSTFIX_MESSAGE_SIZE_LIMIT ${file}
+    required POSTFIX_RELAY_NETS ${file}
+    optional POSTFIX_RELAY_HOST ${file}
+    optional POSTFIX_LOGGING_LEVEL ${file}
     required POSTFIX_SUBMISSION_PORT ${file}
 
     required DATABASE_HOSTNAME ${file}
