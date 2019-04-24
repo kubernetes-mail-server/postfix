@@ -21,17 +21,13 @@ spec:
             - configMapRef:
                 name: {{ .Values.name }}
             - configMapRef:
+                name: general
+            - configMapRef:
                 name: connection-map
             - configMapRef:
                 name: database-read
             - configMapRef:
                 name: database-common
-          env:
-            - name: "RECIPIENT_DELIMITER"
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ .Values.namespace }}
-                  key: general.recipient_delimiter
           ports:
             - name: haproxy-smtpd
               containerPort: {{ .Values.haproxy_smtpd }}
