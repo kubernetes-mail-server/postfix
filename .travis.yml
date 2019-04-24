@@ -68,7 +68,6 @@ jobs:
         - kubectl scale --replicas=0 deployment/${NAME} || true
         - kubectl get deployments
         - helm template
-            -f $PWD/values.yaml
             --set name=${NAME}
             --set namespace=${NAMESPACE}
             --set hostname=$(kubectl get cm services-info -o=jsonpath="{.data.HOSTNAME}")
