@@ -27,11 +27,6 @@ spec:
             - configMapRef:
                 name: database-common
           env:
-            - name: "SERVER_DOMAIN"
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ .Values.namespace }}
-                  key: server.domain
             - name: "RECIPIENT_DELIMITER"
               valueFrom:
                 configMapKeyRef:

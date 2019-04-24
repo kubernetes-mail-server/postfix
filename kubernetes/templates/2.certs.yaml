@@ -10,6 +10,6 @@ spec:
   tls:
     - secretName: tls-postfix
       hosts:
-        - "{{ .Values.server.hostname }}"
+        - "{{ .Values.hostname }}"
   rules:
-    - host: "{{ .Values.server.hostname }}"
+    - host: "{{ .Values.hostname }}"

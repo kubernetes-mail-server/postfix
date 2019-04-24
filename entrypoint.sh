@@ -20,14 +20,14 @@ function optional () {
 }
 
 for file in $(find /etc/postfix -type f); do
-    required SERVER_DOMAIN ${file}
-    required SERVER_HOSTNAME ${file}
+    required DOMAIN ${file}
+    required HOSTNAME ${file}
     required MESSAGE_SIZE_LIMIT ${file}
     required RELAY_NETS ${file}
     optional RELAY_HOST ${file}
     required RECIPIENT_DELIMITER ${file}
     optional LOGGING_LEVEL ${file}
-    required INTERNAL_SMTPD_PORT ${file}
+    required POSTFIX_SUBMISSION_PORT ${file}
 
     required DATABASE_HOSTNAME ${file}
     required DATABASE_USERNAME ${file}
