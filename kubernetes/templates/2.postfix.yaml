@@ -11,6 +11,8 @@ spec:
         app: {{ .Values.namespace }}
         role: {{ .Values.name }}
     spec:
+      nodeSelector:
+        mailserver: "true"
       imagePullSecrets:
         - name: {{ .Values.name }}
       containers:
