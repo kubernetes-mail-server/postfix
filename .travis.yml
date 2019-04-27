@@ -26,6 +26,7 @@ before_install:
   - curl -L ${HELM} | tar xzO linux-amd64/helm > $PWD/helm
   - chmod +x $PWD/helm $PWD/kubectl
   - export -p PATH=$PATH:$PWD
+  - export -p BUILD_ID=$(git rev-parse --short HEAD)
 
 jobs:
   include:
@@ -43,10 +44,10 @@ jobs:
         - if [[ -f ${CACHE_FILE} ]]; then docker load -i ${CACHE_FILE}; fi
         - docker images
         - docker tag ${IMAGE} ${IMAGE}:latest
-        - docker tag ${IMAGE} ${IMAGE}:${TRAVIS_BUILD_ID}
+        - docker tag ${IMAGE} ${IMAGE}:${BUILD_ID}
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push ${IMAGE}:latest
-        - docker push ${IMAGE}:${TRAVIS_BUILD_ID}
+        - docker push ${IMAGE}:${BUILD_ID}
     - stage: push
       name: Tag and push the version build using github tag name
       if: branch != master AND type != pull_request
@@ -55,10 +56,10 @@ jobs:
         - if [[ -f ${CACHE_FILE} ]]; then docker load -i ${CACHE_FILE}; fi
         - docker images
         - docker tag ${IMAGE} ${IMAGE}:${TRAVIS_TAG}
-        - docker tag ${IMAGE} ${IMAGE}:${TRAVIS_BUILD_ID}
+        - docker tag ${IMAGE} ${IMAGE}:${BUILD_ID}
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push ${IMAGE}:${TRAVIS_TAG}
-        - docker push ${IMAGE}:${TRAVIS_BUILD_ID}
+        - docker push ${IMAGE}:${BUILD_ID}
     - stage: deploy
       name: Deploy the master branch to the kubernetes cluster
       if: branch = master and type != pull_request
@@ -73,7 +74,7 @@ jobs:
             --set hostname=$(kubectl get cm services-info -o=jsonpath="{.data.HOSTNAME}")
             --set haproxy_smtpd=$(kubectl get cm services-info -o=jsonpath="{.data.POSTFIX_PORT}")
             --set plain_smtpd=$(kubectl get cm services-info -o=jsonpath="{.data.POSTFIX_SUBMISSION_PORT}")
-            --set repository=${IMAGE}:${TRAVIS_BUILD_ID}
+            --set repository=${IMAGE}:${BUILD_ID}
             $PWD/kubernetes | kubectl apply -f -
         - kubectl scale --replicas=${REPLICAS} deployment/${NAME}
         - kubectl get deployments
