@@ -113,9 +113,9 @@ smtpd_sasl_type = dovecot
 smtpd_tls_auth_only = yes
 # Disable SSL compression
 tls_ssl_options = NO_COMPRESSION
-# Disable SSLv2 and SSLv3 leaving TLSv1, TLSv1.1 and TLSv1.2 enabled.
-smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3
-smtpd_tls_protocols = !SSLv2 !SSLv3
+# Disable SSLv2 leaving SSLv3 (because it's a public MX), TLSv1, TLSv1.1 and TLSv1.2 enabled.
+smtpd_tls_mandatory_protocols = !SSLv2
+smtpd_tls_protocols = !SSLv2
 
 # Configure the allowed cipher list
 smtpd_tls_mandatory_ciphers=high
