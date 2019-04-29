@@ -95,6 +95,7 @@ smtpd_junk_command_limit = 2
 # Configure the SASL auth that should be used
 smtpd_sasl_path = inet:{{ DOVECOT_HOSTNAME }}:{{ DOVECOT_LMTP }}
 smtpd_sasl_type = dovecot
+smtpd_tls_loglevel = {{ TLS_LOGGING_LEVEL }}
 smtpd_tls_security_level = may
 # Let's Encrypt certificate file
 smtpd_tls_cert_file = /etc/certs/tls.crt
