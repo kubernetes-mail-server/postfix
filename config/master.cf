@@ -2,11 +2,11 @@
 #                   (yes)   (yes)   (yes)   (never) (100)
 
 # Connections coming from dovecot
-{{ POSTFIX_SUBMISSION_PORT }} inet  n       -       n       -       -       smtpd {{ POSTFIX_LOGGING_LEVEL }}
+{{ POSTFIX_SUBMISSION_PORT }} inet  n       -       n       -       -       smtpd {{ POSTFIX_SMTPD_LOGGING_LEVEL }}
 
 # Exposed SMTP service (postscreen support is needed to support the proxy protocol [search postscreen_upstream_proxy_protocol in main.cf])
 smtp          inet  n       -       -       -       1       postscreen
-smtpd         pass  -       -       -       -       -       smtpd {{ POSTFIX_LOGGING_LEVEL }}
+smtpd         pass  -       -       -       -       -       smtpd {{ POSTFIX_SMTPD_LOGGING_LEVEL }}
 
 # Internal postfix services
 pickup        unix  n       -       n       60      1       pickup
