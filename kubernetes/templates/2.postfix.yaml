@@ -15,12 +15,6 @@ spec:
         mailserver: "true"
       imagePullSecrets:
         - name: {{ .Values.name }}
-      initContainers:
-        - name: disable-tcp-window-scaling
-          image: busybox
-          command: ["sysctl", "-w", "net.ipv4.tcp_window_scaling=0"]
-          securityContext:
-            privileged: true
       containers:
         - name: {{ .Values.name }}
           image: {{ .Values.repository }}
