@@ -22,13 +22,13 @@ spec:
           readinessProbe:
             tcpSocket:
               port: {{ .Values.plain_smtpd }}
-            initialDelaySeconds: 30
-            periodSeconds: 10
+            initialDelaySeconds: 60
+            periodSeconds: 60
           livenessProbe:
             tcpSocket:
               port: {{ .Values.plain_smtpd }}
-            initialDelaySeconds: 30
-            periodSeconds: 10
+            initialDelaySeconds: 60
+            periodSeconds: 60
           envFrom:
             - configMapRef:
                 name: {{ .Values.name }}
