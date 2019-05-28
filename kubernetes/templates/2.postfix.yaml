@@ -12,7 +12,7 @@ spec:
         role: {{ .Values.name }}
     spec:
       nodeSelector:
-        mailserver: "true"
+        mail-server: "true"
       imagePullSecrets:
         - name: {{ .Values.name }}
       containers:
