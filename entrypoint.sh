@@ -19,6 +19,8 @@ function optional () {
     sed -i "s~{{ $1 }}~$v~g" $2
 }
 
+[ -z "${POSTFIX_TLS_LOGGING_LEVEL}" ] && POSTFIX_TLS_LOGGING_LEVEL=1
+
 for file in $(find /etc/postfix -type f); do
     required DOMAIN ${file}
     required HOSTNAME ${file}
@@ -26,8 +28,10 @@ for file in $(find /etc/postfix -type f); do
     required POSTFIX_MESSAGE_SIZE_LIMIT ${file}
     required POSTFIX_RELAY_NETS ${file}
     optional POSTFIX_RELAY_HOST ${file}
-    optional POSTFIX_LOGGING_LEVEL ${file}
     required POSTFIX_SUBMISSION_PORT ${file}
+
+    optional POSTFIX_SMTPD_LOGGING_LEVEL ${file}
+    required POSTFIX_TLS_LOGGING_LEVEL ${file}
 
     required DATABASE_HOSTNAME ${file}
     required DATABASE_USERNAME ${file}

@@ -95,6 +95,43 @@ smtpd_junk_command_limit = 2
 # Configure the SASL auth that should be used
 smtpd_sasl_path = inet:{{ DOVECOT_HOSTNAME }}:{{ DOVECOT_LMTP }}
 smtpd_sasl_type = dovecot
+
+###############
+# SMTP Server
+###############
+### Tarpit those bots/clients/spammers who send errors or scan for accounts
+smtpd_error_sleep_time = 20
+smtpd_soft_error_limit = 1
+smtpd_hard_error_limit = 3
+smtpd_junk_command_limit = 2
+
+# Configure the SASL auth that should be used
+smtpd_sasl_path = inet:dovecot.mail-server:24
+smtpd_sasl_type = dovecot
+### TLS ENCRYPTION OPTIONS
+# only offer authentication after STARTTLS
+smtpd_tls_auth_only = yes
+# Disable SSL compression
+tls_ssl_options = NO_COMPRESSION
+# Disable SSLv2 leaving SSLv3 (because it's a public MX), TLSv1, TLSv1.1 and TLSv1.2 enabled.
+smtpd_tls_mandatory_protocols = !SSLv2
+smtpd_tls_protocols = !SSLv2
+
+# Configure the allowed cipher list
+smtpd_tls_mandatory_ciphers=high
+tls_high_cipherlist=EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH:+CAMELLIA256:+AES256:+CAMELLIA128:+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!DSS:!RC4:!SEED:!ECDSA:CAMELLIA256-SHA:AES256-SHA:CAMELLIA128-SHA:AES128-SHA
+
+# Enable EECDH key exchange for Forward Security
+smtpd_tls_eecdh_grade=ultra
+
+tls_preempt_cipherlist = yes
+smtpd_tls_ciphers           = medium
+smtp_tls_mandatory_ciphers  = $smtpd_tls_mandatory_ciphers
+smtp_tls_ciphers            = $smtpd_tls_ciphers
+lmtp_tls_mandatory_ciphers  = $smtpd_tls_mandatory_ciphers
+lmtp_tls_ciphers            = $smtpd_tls_ciphers
+
+smtpd_tls_loglevel = {{ POSTFIX_TLS_LOGGING_LEVEL }}
 smtpd_tls_security_level = may
 # Let's Encrypt certificate file
 smtpd_tls_cert_file = /etc/certs/tls.crt
