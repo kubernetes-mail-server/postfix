@@ -1,17 +1,11 @@
-FROM alpine:3.8
+FROM alpine:latest
 
 ENV TZ=/etc/localtime
-ENV ALPINE_VERSION=3.8
-ENV ALPINE_MIRROR=http://nl.alpinelinux.org/alpine
 
 RUN set -xe \
-	&& echo ${ALPINE_MIRROR}/v${ALPINE_VERSION}/main > /etc/apk/repositories \
-    && echo ${ALPINE_MIRROR}/v${ALPINE_VERSION}/community >> /etc/apk/repositories \
-    && echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
-    && cat /etc/apk/repositories \
     && apk add --no-cache \
             bind-tools \
-            postfix@edge postfix-mysql@edge postfix-pcre@edge \
+            postfix postfix-mysql postfix-pcre \
             supervisor rsyslog tzdata \
     && echo "Setting the UTC timezone" \
     && cp /usr/share/zoneinfo/UTC /etc/localtime

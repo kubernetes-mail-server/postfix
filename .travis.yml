@@ -65,19 +65,19 @@ jobs:
       if: branch = master and type != pull_request
       script:
         - export KUBECONFIG=$PWD/kubeconfig
-        - kubectl get pods
-        - kubectl scale --replicas=0 deployment/${NAME} || true
-        - kubectl get deployments
+        - kubectl get pods -n ${NAMESPACE}
+        - kubectl scale --replicas=0 -n ${NAMESPACE} deployment/${NAME} || true
+        - kubectl get deployments -n ${NAMESPACE}
         - helm template
             --set name=${NAME}
             --set namespace=${NAMESPACE}
-            --set hostname=$(kubectl get cm services-info -o=jsonpath="{.data.HOSTNAME}")
-            --set haproxy_smtpd=$(kubectl get cm services-info -o=jsonpath="{.data.POSTFIX_PORT}")
-            --set plain_smtpd=$(kubectl get cm services-info -o=jsonpath="{.data.POSTFIX_SUBMISSION_PORT}")
+            --set hostname=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.HOSTNAME}")
+            --set haproxy_smtpd=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.POSTFIX_PORT}")
+            --set plain_smtpd=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.POSTFIX_SUBMISSION_PORT}")
             --set repository=${IMAGE}:${BUILD_ID}
             $PWD/kubernetes | kubectl apply -f -
-        - kubectl scale --replicas=${REPLICAS} deployment/${NAME}
-        - kubectl get deployments
+        - kubectl scale --replicas=${REPLICAS} -n ${NAMESPACE} deployment/${NAME}
+        - kubectl get deployments -n ${NAMESPACE}
     - stage: cleanup
       name: Remove the docker image from the cache
       script:
