@@ -17,7 +17,7 @@ env:
     - secure: "PhIspy1PLCJk+oeAW/KmnOLoGK+AknkRErunmfzS4RL7x8ivApDqA3VOWlmoKM5AuI+rYMU5NI+lHf2Ab5nGnPWhIbguxcQaDJdjqhLD1IoPr1ouh8YjFSl4RP1ScE5VNAVpKMeTzg5JesM9tsiG012/Nq5XJSOEHjY/oLnhDdqSNreVQLRzOdqGJL+3mPTENeKnRr39k6pUOZunHMGjmRpJZMHUwfPsYg2ftcdxgh7nr7wXkplJ3L6qZJv/mCx/XP2bpJzzDF5xCkeDIAVbaL7kjhF8Wwb/nQy+C/7QSaWlP4WEsyjgI6ril+ruagv7bWhkKVAThSfPkQ7Wr4aXX0wgi4cxZvuiKhOlSOyteO1NdAz/phcHrvjeznVlUNYUn+3l89oRI8S/xcjvmOBT4+vGKQ3esTn/67C1U49a/6i11jfPL7V8tY2beD3xQOIylrdEhG1vbKrKdwoZ/8M0PVGaj5lXo2PVfJ4s/OgSrhgfCGxRGOBJ+85WcOxTJW/h9tDRi3DFHDpvJPrSE7WLbdYOyUZWngX9jjYUbvDVMwbFKTS3W4QAaKjMn9JLN8aeBBdMXScgswsGtwd7lurDyomBMazYFj5LAlLxa6FIDhwiBeDRJUoTOo0gR/Mr5HZVjb4zj5hMCbgayj9zmRNcdUekUspuzBYvCemhFycq9Wg="
 
 before_install:
-  - openssl aes-256-cbc -K $encrypted_416f84c3bc61_key -iv $encrypted_416f84c3bc61_iv -in kubeconfig.enc -out kubeconfig -d
+  - openssl aes-256-cbc -K $encrypted_c25bfdc08df8_key -iv $encrypted_c25bfdc08df8_iv -in kubeconfig.enc -out kubeconfig -d
   - KUBE_LATEST_VERSION="v1.14.1"
   - HELM_LATEST_VERSION="v2.13.1"
   - HELM=https://storage.googleapis.com/kubernetes-helm/helm-${HELM_LATEST_VERSION}-linux-amd64.tar.gz
