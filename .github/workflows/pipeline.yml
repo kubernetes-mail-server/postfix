@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     env:
-      PATH: PATH:~/kube
+      PATH: $PATH:~/kube
       KUBECONFIG: ~/kube/kubeconfig
       NAME: postfix
       IMAGE: ghcr.io/kubernetes-mail-server/${NAME}
@@ -68,8 +68,7 @@ jobs:
 
       - name: Setup Tools
         run: |
-          apt-get update
-          apt-get -y install tar
+          echo $PATH
           curl -L ${KUBECTL} -o ~/kube/kubectl
           curl -L ${HELM} | tar xzO linux-amd64/helm > ~/kube/helm
           chmod +x ~/kube/helm ~/kube/kubectl
@@ -94,7 +93,7 @@ jobs:
             --set haproxy_smtpd=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.POSTFIX_PORT}") \
             --set plain_smtpd=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.POSTFIX_SUBMISSION_PORT}") \
             --set repository=${IMAGE}@${{ steps.docker_build.outputs.digest }} \
-            $PWD/kubernetes | kubectl apply -f -
+            ${GITHUB_WORKSPACE}/kubernetes | kubectl apply -f -
 
       - name: Scale up
         run: | 
