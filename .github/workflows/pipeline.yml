@@ -46,6 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     env:
+      CLUSTER_CONFIG: ${{ secrets.CLUSTER_CONFIG }}
       KUBECONFIG: $HOME/kube/kubeconfig
       NAME: postfix
       IMAGE: ghcr.io/kubernetes-mail-server/${NAME}
