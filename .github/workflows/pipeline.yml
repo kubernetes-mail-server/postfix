@@ -47,28 +47,33 @@ jobs:
     needs: build
     env:
       NAME: postfix
-      IMAGE: ghcr.io/kubernetes-mail-server/${NAME}:latest
+      IMAGE: ghcr.io/kubernetes-mail-server/${NAME}:latest@${{ steps.docker_build.outputs.digest }}
       NAMESPACE: mail-server
       REPLICAS: 1
       HELM: https://get.helm.sh/helm-v3.3.1-linux-amd64.tar.gz
       KUBECTL: https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/linux/amd64/kubectl
     steps:
       - 
-        name: Install Tools
+        name: Deploy to cluster
         run: |
           curl -L ${KUBECTL} -o $PWD/kubectl
           curl -L ${HELM} | tar xzO linux-amd64/helm > $PWD/helm
           chmod +x $PWD/helm $PWD/kubectl
           export -p PATH=$PATH:$PWD
-          ls -la $PWD
-      - 
-        name: Setup kubeconfig
-        run: |
           echo $KUBECONFIG > $PWD/kubeconfig
+          cat $PWD/kubeconfig
           export KUBECONFIG=$PWD/kubeconfig
-      - 
-        name: Scale to zero
-        run: |
           kubectl get pods -n ${NAMESPACE}
           kubectl scale --replicas=0 -n ${NAMESPACE} deployment/${NAME} || true
           kubectl get deployments -n ${NAMESPACE}
+          helm template \
+            --set name=${NAME} \
+            --set namespace=${NAMESPACE} \
+            --set hostname=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.HOSTNAME}") \
+            --set haproxy_smtpd=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.POSTFIX_PORT}") \
+            --set plain_smtpd=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.POSTFIX_SUBMISSION_PORT}") \
+            --set repository=${IMAGE}:${BUILD_ID} \
+            $PWD/kubernetes | kubectl apply -f -
+          kubectl scale --replicas=${REPLICAS} -n ${NAMESPACE} deployment/${NAME}
+          kubectl get deployments -n ${NAMESPACE}
+
