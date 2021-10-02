@@ -83,7 +83,8 @@ jobs:
       - name: Scale down
         run: | 
           ls -la $HOME/kube
-          echo $HOME/kube/kubeconfig
+          echo $KUBECONFIG
+          cat $HOME/kube/kubeconfig
           kubectl get pods -n ${NAMESPACE}
           kubectl scale --replicas=0 -n ${NAMESPACE} deployment/${NAME} || true
           kubectl get deployments -n ${NAMESPACE}
