@@ -67,6 +67,7 @@ jobs:
 
       - name: Setup Tools
         run: |
+          mkdir $HOME/kube
           echo "$HOME/kube" >> ${GITHUB_PATH}
           curl -L ${KUBECTL} -o $HOME/kube/kubectl
           curl -L ${HELM} | tar xzO linux-amd64/helm > $HOME/kube/helm
