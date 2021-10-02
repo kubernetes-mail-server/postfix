@@ -68,6 +68,8 @@ jobs:
 
       - name: Setup Tools
         run: |
+          apt-get update
+          apt-get -y install tar
           curl -L ${KUBECTL} -o ~/kube/kubectl
           curl -L ${HELM} | tar xzO linux-amd64/helm > ~/kube/helm
           chmod +x ~/kube/helm ~/kube/kubectl
