@@ -76,12 +76,13 @@ jobs:
       - name: Setup Kubeconfig
         run: |
           echo $PATH
-          echo $KUBECONFIG > $HOME/kube/kubeconfig
+          echo ${CLUSTER_CONFIG} > $HOME/kube/kubeconfig
           cat $HOME/kube/kubeconfig
           ls -la $HOME/kube
 
       - name: Scale down
         run: | 
+          ls -la $HOME/kube
           kubectl get pods -n ${NAMESPACE}
           kubectl scale --replicas=0 -n ${NAMESPACE} deployment/${NAME} || true
           kubectl get deployments -n ${NAMESPACE}
