@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     env:
-      KUBECONFIG: ~/kube/kubeconfig
+      KUBECONFIG: $HOME/kube/kubeconfig
       NAME: postfix
       IMAGE: ghcr.io/kubernetes-mail-server/${NAME}
       NAMESPACE: mail-server
@@ -71,13 +71,14 @@ jobs:
           echo "$HOME/kube" >> ${GITHUB_PATH}
           curl -L ${KUBECTL} -o $HOME/kube/kubectl
           curl -L ${HELM} | tar xzO linux-amd64/helm > $HOME/kube/helm
-          chmod +x ~/kube/helm $HOME/kube/kubectl
+          chmod +x $HOME/kube/helm $HOME/kube/kubectl
 
       - name: Setup Kubeconfig
         run: |
           echo $PATH
           echo $KUBECONFIG > $HOME/kube/kubeconfig
           cat $HOME/kube/kubeconfig
+          ls -la $HOME/kube
 
       - name: Scale down
         run: | 
