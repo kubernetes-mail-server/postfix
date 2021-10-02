@@ -46,7 +46,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     env:
-      PATH: $PATH:~/kube
       KUBECONFIG: ~/kube/kubeconfig
       NAME: postfix
       IMAGE: ghcr.io/kubernetes-mail-server/${NAME}
@@ -61,22 +60,23 @@ jobs:
       - name: Cache Tools
         uses: actions/cache@v2
         with:
-          path: ~/kube
+          path: $HOME/kube
           key: ${{ runner.os }}-build-kube-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-build-kube
 
       - name: Setup Tools
         run: |
-          echo $PATH
-          curl -L ${KUBECTL} -o ~/kube/kubectl
-          curl -L ${HELM} | tar xzO linux-amd64/helm > ~/kube/helm
-          chmod +x ~/kube/helm ~/kube/kubectl
+          echo "$HOME/kube" >> ${GITHUB_PATH}
+          curl -L ${KUBECTL} -o $HOME/kube/kubectl
+          curl -L ${HELM} | tar xzO linux-amd64/helm > $HOME/kube/helm
+          chmod +x ~/kube/helm $HOME/kube/kubectl
 
       - name: Setup Kubeconfig
         run: |
-          echo $KUBECONFIG > ~/kube/kubeconfig
-          cat ~/kube/kubeconfig
+          echo $PATH
+          echo $KUBECONFIG > $HOME/kube/kubeconfig
+          cat $HOME/kube/kubeconfig
 
       - name: Scale down
         run: | 
