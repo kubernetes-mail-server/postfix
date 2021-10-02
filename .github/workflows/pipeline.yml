@@ -36,7 +36,7 @@ jobs:
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ghcr.io/kubernetes-mail-server/postfix:latest
+          tags: ghcr.io/kubernetes-mail-server/postfix
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
       -
@@ -47,7 +47,7 @@ jobs:
     needs: build
     env:
       NAME: postfix
-      IMAGE: ghcr.io/kubernetes-mail-server/${NAME}:latest@${{ steps.docker_build.outputs.digest }}
+      IMAGE: ghcr.io/kubernetes-mail-server/${NAME}
       NAMESPACE: mail-server
       REPLICAS: 1
       HELM: https://get.helm.sh/helm-v3.3.1-linux-amd64.tar.gz
@@ -72,7 +72,7 @@ jobs:
             --set hostname=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.HOSTNAME}") \
             --set haproxy_smtpd=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.POSTFIX_PORT}") \
             --set plain_smtpd=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.POSTFIX_SUBMISSION_PORT}") \
-            --set repository=${IMAGE}:${BUILD_ID} \
+            --set repository=${IMAGE}@${{ steps.docker_build.outputs.digest }} \
             $PWD/kubernetes | kubectl apply -f -
           kubectl scale --replicas=${REPLICAS} -n ${NAMESPACE} deployment/${NAME}
           kubectl get deployments -n ${NAMESPACE}
