@@ -77,8 +77,7 @@ jobs:
       - name: Setup Kubeconfig
         run: |
           echo $PATH
-          echo ${CLUSTER_CONFIG} > $HOME/kube/kubeconfig
-          cat $HOME/kube/kubeconfig
+          echo "${CLUSTER_CONFIG}" > $HOME/kube/kubeconfig
           ls -la $HOME/kube
 
       - name: Scale down
