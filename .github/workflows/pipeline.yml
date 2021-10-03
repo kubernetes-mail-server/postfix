@@ -47,7 +47,7 @@ jobs:
     needs: build
     env:
       CLUSTER_CONFIG: ${{ secrets.CLUSTER_CONFIG }}
-      KUBECONFIG: ${GITHUB_WORKSPACE}/kubeconfig
+      KUBECONFIG: kubeconfig
       NAME: postfix
       NAMESPACE: mail-server
       REPLICAS: 1
@@ -77,22 +77,11 @@ jobs:
         run: |
           echo $PATH
           echo "${CLUSTER_CONFIG}" > ${GITHUB_WORKSPACE}/kubeconfig
-          ls -la ${GITHUB_WORKSPACE}
-
-      - name: Debugging
-        run: | 
-          export -p KUBECONFIG=kubeconfig
           sha1sum ${KUBECONFIG}
+          ls -la ${GITHUB_WORKSPACE}
 
       - name: Scale down
         run: | 
-          ls -la ${GITHUB_WORKSPACE}
-          ls -la ${KUBECONFIG}
-          echo "${GITHUB_WORKSPACE}"
-          echo "${KUBECONFIG}"
-          sha1sum ${KUBECONFIG}
-          cat ${KUBECONFIG}
-          cat kubeconfig
           kubectl get pods -n ${NAMESPACE}
           kubectl scale --replicas=0 -n ${NAMESPACE} deployment/${NAME} || true
           kubectl get deployments -n ${NAMESPACE}
