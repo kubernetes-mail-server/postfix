@@ -84,10 +84,11 @@ jobs:
         run: | 
           ls -la ${GITHUB_WORKSPACE}
           ls -la ${KUBECONFIG}
-          echo ${KUBECONFIG}
+          echo "${GITHUB_WORKSPACE}"
+          echo "${KUBECONFIG}"
           sha1sum ${KUBECONFIG}
-          cat ${GITHUB_WORKSPACE}/kubeconfig
           cat ${KUBECONFIG}
+          cat kubeconfig
           kubectl get pods -n ${NAMESPACE}
           kubectl scale --replicas=0 -n ${NAMESPACE} deployment/${NAME} || true
           kubectl get deployments -n ${NAMESPACE}
