@@ -82,6 +82,7 @@ jobs:
 
       - name: Debugging
         run: | 
+          echo "${!GITHUB_WORKSPACE}/kubeconfig"
           echo "${!KUBECONFIG}"
           
 
