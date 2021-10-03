@@ -93,7 +93,7 @@ jobs:
             --set hostname=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.HOSTNAME}") \
             --set haproxy_smtpd=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.POSTFIX_PORT}") \
             --set plain_smtpd=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.POSTFIX_SUBMISSION_PORT}") \
-            --set repository=ghcr.io/kubernetes-mail-server/${NAME}@${{ jobs.build.outputs.digest }} \
+            --set repository=ghcr.io/kubernetes-mail-server/${NAME}@${{ needs.jobs.build.outputs.digest }} \
             ${GITHUB_WORKSPACE}/kubernetes | kubectl apply -f -
 
       - name: Scale up
