@@ -47,7 +47,7 @@ jobs:
     needs: build
     env:
       CLUSTER_CONFIG: ${{ secrets.CLUSTER_CONFIG }}
-      KUBECONFIG: $HOME/kube/kubeconfig
+      KUBECONFIG: ${GITHUB_WORKSPACE}/kubeconfig
       NAME: postfix
       IMAGE: ghcr.io/kubernetes-mail-server/${NAME}
       NAMESPACE: mail-server
@@ -68,26 +68,25 @@ jobs:
 
       - name: Setup Tools
         run: |
-          mkdir $HOME/kube
-          echo "$HOME/kube" >> ${GITHUB_PATH}
-          curl -L ${KUBECTL} -o $HOME/kube/kubectl
-          curl -L ${HELM} | tar xzO linux-amd64/helm > $HOME/kube/helm
-          chmod +x $HOME/kube/helm $HOME/kube/kubectl
+          echo "${GITHUB_WORKSPACE}" >> ${GITHUB_PATH}
+          curl -L ${KUBECTL} -o ${GITHUB_WORKSPACE}/kubectl
+          curl -L ${HELM} | tar xzO linux-amd64/helm > ${GITHUB_WORKSPACE}/helm
+          chmod +x ${GITHUB_WORKSPACE}/helm ${GITHUB_WORKSPACE}/kubectl
+          ls -la ${GITHUB_WORKSPACE}
 
       - name: Setup Kubeconfig
         run: |
           echo $PATH
-          echo "${CLUSTER_CONFIG}" > $HOME/kube/kubeconfig
-          ls -la $HOME/kube
+          echo "${CLUSTER_CONFIG}" > ${GITHUB_WORKSPACE}/kubeconfig
+          ls -la ${GITHUB_WORKSPACE}
 
       - name: Scale down
         run: | 
-          ls -la ${HOME}/kube
-          ls -la ${HOME}/kube/kubeconfig
+          ls -la ${GITHUB_WORKSPACE}
           ls -la ${KUBECONFIG}
           echo ${KUBECONFIG}
           sha1sum ${KUBECONFIG}
-          cat ${HOME}/kube/kubeconfig
+          cat ${GITHUB_WORKSPACE}/kubeconfig
           cat ${KUBECONFIG}
           kubectl get pods -n ${NAMESPACE}
           kubectl scale --replicas=0 -n ${NAMESPACE} deployment/${NAME} || true
