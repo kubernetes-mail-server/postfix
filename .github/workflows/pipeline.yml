@@ -82,10 +82,13 @@ jobs:
 
       - name: Scale down
         run: | 
-          ls -la $HOME/kube
+          ls -la ${HOME}/kube
+          ls -la ${HOME}/kube/kubeconfig
+          ls -la ${KUBECONFIG}
           echo ${KUBECONFIG}
-          cat ${HOME}/kube/kubeconfig
           sha1sum ${KUBECONFIG}
+          cat ${HOME}/kube/kubeconfig
+          cat ${KUBECONFIG}
           kubectl get pods -n ${NAMESPACE}
           kubectl scale --replicas=0 -n ${NAMESPACE} deployment/${NAME} || true
           kubectl get deployments -n ${NAMESPACE}
