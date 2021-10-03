@@ -71,14 +71,11 @@ jobs:
           curl -L ${KUBECTL} -o ${GITHUB_WORKSPACE}/kubectl
           curl -L ${HELM} | tar xzO linux-amd64/helm > ${GITHUB_WORKSPACE}/helm
           chmod +x ${GITHUB_WORKSPACE}/helm ${GITHUB_WORKSPACE}/kubectl
-          ls -la ${GITHUB_WORKSPACE}
 
       - name: Setup Kubeconfig
         run: |
           echo $PATH
           echo "${CLUSTER_CONFIG}" > ${GITHUB_WORKSPACE}/kubeconfig
-          sha1sum ${KUBECONFIG}
-          ls -la ${GITHUB_WORKSPACE}
 
       - name: Scale down
         run: | 
