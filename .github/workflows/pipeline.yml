@@ -80,6 +80,11 @@ jobs:
           echo "${CLUSTER_CONFIG}" > ${GITHUB_WORKSPACE}/kubeconfig
           ls -la ${GITHUB_WORKSPACE}
 
+      - name: Debugging
+        run: | 
+          echo "${!KUBECONFIG}"
+          
+
       - name: Scale down
         run: | 
           ls -la ${GITHUB_WORKSPACE}
