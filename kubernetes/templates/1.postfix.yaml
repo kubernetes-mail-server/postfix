@@ -17,8 +17,6 @@ spec:
     spec:
       nodeSelector:
         mail-server: "true"
-      imagePullSecrets:
-        - name: {{ .Values.name }}
       containers:
         - name: {{ .Values.name }}
           image: {{ .Values.repository }}
