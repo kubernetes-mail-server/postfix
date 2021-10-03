@@ -1,5 +1,9 @@
-name: build postfix container
-on: [push]
+name: build and deploy container
+
+on: 
+  push:
+    branches: [master]
+
 jobs:
   build:
     runs-on: ubuntu-latest
