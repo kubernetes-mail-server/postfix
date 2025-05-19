@@ -17,6 +17,10 @@ spec:
     spec:
       nodeSelector:
         mail-server: "true"
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
       containers:
         - name: {{ .Values.name }}
           image: {{ .Values.repository }}
