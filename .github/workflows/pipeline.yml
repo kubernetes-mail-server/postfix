@@ -5,6 +5,16 @@ on:
   push:
     branches: [master]
 
+env:
+  CLUSTER_CONFIG: ${{ secrets.CLUSTER_CONFIG }}
+  KUBECONFIG: kubeconfig
+  REPO: ghcr.io/kubernetes-mail-server
+  NAME: postfix
+  NAMESPACE: mail-server
+  REPLICAS: 1
+  HELM: https://get.helm.sh/helm-v3.3.1-linux-amd64.tar.gz
+  KUBECTL: https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/linux/amd64/kubectl
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -53,24 +63,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     env:
-      CLUSTER_CONFIG: ${{ secrets.CLUSTER_CONFIG }}
-      KUBECONFIG: kubeconfig
-      NAME: postfix
-      NAMESPACE: mail-server
-      REPLICAS: 1
-      HELM: https://get.helm.sh/helm-v3.3.1-linux-amd64.tar.gz
-      KUBECTL: https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/linux/amd64/kubectl
+      DIGEST: ${{ needs.build.outputs.digest }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      
-      - name: Cache Tools
-        uses: actions/cache@v2
-        with:
-          path: $HOME/kube
-          key: ${{ runner.os }}-build-kube-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-build-kube
 
       - name: Setup Tools
         run: |
@@ -78,10 +74,6 @@ jobs:
           curl -L ${KUBECTL} -o ${GITHUB_WORKSPACE}/kubectl
           curl -L ${HELM} | tar xzO linux-amd64/helm > ${GITHUB_WORKSPACE}/helm
           chmod +x ${GITHUB_WORKSPACE}/helm ${GITHUB_WORKSPACE}/kubectl
-
-      - name: Setup Kubeconfig
-        run: |
-          echo $PATH
           echo "${CLUSTER_CONFIG}" > ${GITHUB_WORKSPACE}/kubeconfig
 
       - name: Scale down
@@ -98,7 +90,7 @@ jobs:
             --set hostname=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.HOSTNAME}") \
             --set haproxy_smtpd=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.POSTFIX_PORT}") \
             --set plain_smtpd=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.POSTFIX_SUBMISSION_PORT}") \
-            --set repository=ghcr.io/kubernetes-mail-server/${NAME}@${{ needs.build.outputs.digest }} \
+            --set repository=${REPO}/${NAME}@${DIGEST} \
             ${GITHUB_WORKSPACE}/kubernetes | kubectl apply -f -
 
       - name: Scale up
