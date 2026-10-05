@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.21
 
 ENV TZ=/etc/localtime
 
