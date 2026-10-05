@@ -49,6 +49,18 @@ for file in $(find /etc/postfix -type f); do
     required RSPAMD_PORT ${file}
 done
 
+required HOSTNAME /etc/postsrsd/postsrsd.conf
+
+# The SRS signing secret comes from the optional postsrsd Secret, so addresses signed before a
+# restart still verify. Without it a fresh secret is made, which only breaks bounces to mail
+# forwarded before the restart.
+if [ -s /etc/postsrsd-secret/secret ]; then
+    install -m 600 /etc/postsrsd-secret/secret /etc/postsrsd/postsrsd.secret
+else
+    echo "postsrsd: no postsrsd Secret mounted, using a temporary signing secret"
+    (umask 077; head -c 24 /dev/urandom | base64 > /etc/postsrsd/postsrsd.secret)
+fi
+
 echo "Running '$@'"
 exec $@
 
