@@ -154,6 +154,17 @@ virtual_alias_maps = ${mysql}/mysql_virtual_alias_maps.cf
 # Mails are transported if required, then forwarded to Dovecot for delivery
 virtual_transport = lmtp:inet:{{ DOVECOT_HOSTNAME }}:{{ DOVECOT_LMTP }}
 
+# Sender Rewriting Scheme (postsrsd, see /etc/postsrsd/postsrsd.conf), so mail an alias forwards
+# to another provider still passes SPF there. Senders in the hosted domains are answered from the
+# database with their own address and never rewritten; any other sender goes to postsrsd.
+sender_canonical_maps = ${mysql}/mysql_srs_local_senders.cf, socketmap:inet:127.0.0.1:10003:forward
+sender_canonical_classes = envelope_sender
+recipient_canonical_maps = socketmap:inet:127.0.0.1:10003:reverse
+recipient_canonical_classes = envelope_recipient, header_recipient
+# Bounces come back to SRS0=...@{{ HOSTNAME }}: accept that domain, but only SRS addresses in it.
+relay_domains = {{ HOSTNAME }}
+relay_recipient_maps = pcre:${config_directory}/srs_recipients.pcre
+
 # In order to prevent Postfix from running DNS query, enforce the use of the
 # native DNS stack, that will check /etc/hosts properly.
 lmtp_host_lookup = native

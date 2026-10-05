@@ -54,10 +54,17 @@ spec:
           volumeMounts:
             - name: certificate
               mountPath: /etc/certs/
+            - name: postsrsd-secret
+              mountPath: /etc/postsrsd-secret/
+              readOnly: true
       volumes:
         - name: certificate
           secret:
             secretName: tls-postfix
+        - name: postsrsd-secret
+          secret:
+            secretName: postsrsd
+            optional: true
 
 ---
 

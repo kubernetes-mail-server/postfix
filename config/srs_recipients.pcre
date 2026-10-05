@@ -1,0 +1,2 @@
+# Only SRS addresses are valid recipients in the SRS domain; anything else is refused at RCPT.
+/^SRS[01][=+-]/i OK
