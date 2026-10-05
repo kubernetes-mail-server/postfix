@@ -175,7 +175,12 @@ lmtp_host_lookup = native
 
 milter_default_action = accept
 milter_protocol = 2
-smtpd_milters = inet:{{ OPENDKIM_HOSTNAME }}:{{ OPENDKIM_PORT }}
+# rspamd scans mail arriving over SMTP (incoming and submission), after opendkim. It speaks milter
+# protocol 6 and is skipped if it does not answer, so an rspamd outage never stops mail. Locally
+# generated mail (non_smtpd_milters) is only signed, not scanned.
+smtpd_milters =
+  inet:{{ OPENDKIM_HOSTNAME }}:{{ OPENDKIM_PORT }}
+  { inet:{{ RSPAMD_HOSTNAME }}:{{ RSPAMD_PORT }}, protocol=6, default_action=accept, connect_timeout=10s }
 non_smtpd_milters = inet:{{ OPENDKIM_HOSTNAME }}:{{ OPENDKIM_PORT }}
 
 ###############
